@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity.SqlServer;
 using System.Drawing;
+using System.Drawing.Printing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -22,38 +24,95 @@ namespace GS_STB.Class_Modules
 
         public string SerNumber { get; set; }
 
+        
+
+        string _Lot;
+
         DateTime DateText;
         public FASStart()
         {
             ListHeader = new List<string>() { "№", "CH приемника", "CH платы", "Печать", "ScanDate" };
             IDApp = 4;
-
         }
 
         public override void LoadWorkForm()
         {
-             ShiftCounterStart(control);  //Возможно этот метод надо будет засунуть в базовый класс     
-             GetLineForPrint();
+            Label Label_ShiftCounter = control.Controls.Find("Label_ShiftCounter", true).OfType<Label>().FirstOrDefault();
+            Label LB_LOTCounter = control.Controls.Find("LB_LOTCounter", true).OfType<Label>().FirstOrDefault();
+            var LengthCheck = control.Controls.Find("LengthCheck", true).FirstOrDefault().Visible = true ;
+            var FUG = control.Controls.Find("FAS_Print", true).FirstOrDefault();
+            var SNPrint = control.Controls.Find("SNPRINT", true).FirstOrDefault();
+            var CHPrintSN = control.Controls.Find("CHPrintSN", true).OfType<CheckBox>().FirstOrDefault();            
+            var CountLBSN = control.Controls.Find("CountLBSN", true).OfType<Label>().FirstOrDefault();
+            var CHPrintID = control.Controls.Find("CHPrintID", true).OfType<CheckBox>().FirstOrDefault().Visible = false;
+            var CountLBID = control.Controls.Find("CountLBID", true).OfType<Label>().FirstOrDefault().Visible = false;
+            var XSN = control.Controls.Find("XSN", true).OfType<NumericUpDown>().FirstOrDefault();
+            var YSN = control.Controls.Find("YSN", true).OfType<NumericUpDown>().FirstOrDefault();
+            var PrintLBName = control.Controls.Find("PrintLBName", true).OfType<Label>().FirstOrDefault();
+            PrintLBName.Text = "Текущий принтер \n" + printName;
+
+            var ListPrinter = control.Controls.Find("ListPrinter", true).OfType<ListBox>().FirstOrDefault();
+            foreach (var item in PrinterSettings.InstalledPrinters)
+                if (item.ToString().Contains("ZDesigner"))
+                    ListPrinter.Items.Add(item);
+
+
+            FUG.Visible = true;
+            FUG.Location = new Point(264, 19);
+            FUG.Size = new Size(585, 186);
+
+            GetLineForPrint();
+
+            if (CheckPathPrinterSettings())
+                CreatePathPrinter();
+
+            var list = Directory.GetFiles(@"C:\PrinterSettings").ToList();
+            XSN.Value = int.Parse(GetPrSet(list, "XSN"));
+            YSN.Value = int.Parse(GetPrSet(list, "YSN"));
+
+            CHPrintSN.Checked = UpPrintSN;
+            SNPrint.Visible = UpPrintSN;
+            CountLBSN.Text = "Кол-во этикеток SN = " + labelCount.ToString();
+
+            if (CHPrintSN.Checked)
+                CHPrintSN.BackColor = Color.Green;
+            else
+                CHPrintSN.BackColor = Color.White;
+
+            ShiftCounterStart();
+            Label_ShiftCounter.Text = ShiftCounter.ToString();
+            LB_LOTCounter.Text = LotCounter.ToString();
         }
 
         public override void KeyDownMethod()
         {
+            var LengthCheck = control.Controls.Find("LengthCheck", true).OfType<CheckBox>().FirstOrDefault();
             TextBox TB = control.Controls.Find("SerialTextBox", true).OfType<TextBox>().FirstOrDefault();
             Label Controllabel = control.Controls.Find("Controllabel", true).OfType<Label>().FirstOrDefault();
             Label ShiftCounterl = control.Controls.Find("Label_ShiftCounter", true).OfType<Label>().FirstOrDefault();
+            Label LB_LOTCounter = control.Controls.Find("LB_LOTCounter", true).OfType<Label>().FirstOrDefault();
             DataGridView DG_UpLog = control.Controls.Find("DG_UpLog", true).OfType<DataGridView>().FirstOrDefault();
-            GetDate();
-            if (TB.TextLength == 21)
-            {
-                if (CheckLazerPCBID(TB.Text)) //Проверка номера в базе LazerBase //Добавить THT Start
+            if (GetDate())
+            { LabelStatus(Controllabel, $"Не указана дата в лоте, база FAS_GS_Lots, вызовите технолога", Color.Red); return; }
+
+
+            if (LengthCheck.Checked)
+                if (TB.TextLength != 21)
+                { LabelStatus(Controllabel, $"{TB.Text} не верный формат номера", Color.Red); return; }   
+
+
+            if (CheckLazerPCBID(TB.Text)) //Проверка номера в базе LazerBase //Добавить THT Start
                 {
-                    LabelStatus(Controllabel, $"{TB.Text} не зарегистрирован в базе LazerBase", Color.Red); return;
+                    LabelStatus(Controllabel, $"{TB.Text} не зарегистрирован в базе LazerBase или THTStart", Color.Red); return;
                 }
 
                 var FullSN = CheckAssemlyPCBID();
+                if (FullSN == "False")
+                { LabelStatus(Controllabel, $"{TB.Text} уже был отсканирован в лоте {_Lot}", Color.Red); return; }
+
                 if (!string.IsNullOrEmpty(FullSN))
                 {
-                    if (!PrintBool)
+                    if (!UpPrintSN)
                      { LabelStatus(Controllabel, $"{TB.Text} уже присвоен {FullSN}", Color.Red); return; }
 
                     var Mes = new msg($"{TB.Text} уже присвоен \n SN номер{FullSN} \n Хотите перепечатать SN номер?");
@@ -61,77 +120,115 @@ namespace GS_STB.Class_Modules
                     if (Result == DialogResult.No)
                     { LabelStatus(Controllabel, $"{TB.Text} уже присвоен SN {FullSN} \n печать отменена!", Color.Red); return; }
 
+                    if (string.IsNullOrEmpty(printName))
+                    { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return; }
+
                     var printCodeSN = FullSN.Substring(0, 22) + ">6" + FullSN.Substring(22);
                     var PrintTextSN = FullSN.Substring(0, 2) + " " + FullSN.Substring(2, 4) + " " + FullSN.Substring(6, 2) + " " + FullSN.Substring(8, 2) +
                                       " " + FullSN.Substring(10, 2) + " " + FullSN.Substring(12, 3) + " " + FullSN.Substring(15, 8);
-                    print(LabelSN(PrintTextSN, printCodeSN));
+
+                    if (CheckPathPrinterSettings())
+                        CreatePathPrinter();
+
+                    var list = Directory.GetFiles(@"C:\PrinterSettings").ToList();
+                    var X = GetPrSet(list, "XSN");
+                    var Y = GetPrSet(list, "YSN");
+                    DateText = GetManufDate(FullSN);                   
+                    print(LabelSN(PrintTextSN, printCodeSN,int.Parse(X), int.Parse(Y)));
 
                     { LabelStatus(Controllabel, $"{TB.Text} уже присвоен SN {FullSN} \n Печать готова!", Color.Green); return; }
-
                 }
-
 
                 if (WriteDB(0, Controllabel)) { return; }
 
                 if (FullSTBSN.Length == 23)
                 {
-                    if (PrintBool) //Принт, печатать этикетку или нет
+                    if (UpPrintSN) //Принт, печатать этикетку или нет
                     {
+                        if (string.IsNullOrEmpty(printName))
+                        { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return; }
+
                         var printCodeSN = FullSTBSN.Substring(0, 22) + ">6" + FullSTBSN.Substring(22);
                         var PrintTextSN = FullSTBSN.Substring(0, 2) + " " + FullSTBSN.Substring(2, 4) + " " + FullSTBSN.Substring(6, 2) + " " + FullSTBSN.Substring(8, 2) +
                                           " " + FullSTBSN.Substring(10, 2) + " " + FullSTBSN.Substring(12, 3) + " " + FullSTBSN.Substring(15, 8);
-                        print(LabelSN(PrintTextSN, printCodeSN)); //LabelStatus(Controllabel, $"Номер платы {TB.Text} /n успешно соединен с номером приемника", Color.Green);
+
+                        if (CheckPathPrinterSettings())
+                            CreatePathPrinter();
+
+                        var list = Directory.GetFiles(@"C:\PrinterSettings").ToList();
+                        var X = GetPrSet(list, "XSN");
+                        var Y = GetPrSet(list, "YSN");
+
+                        DateText = GetManufDate(FullSTBSN);
+                        print(LabelSN(PrintTextSN, printCodeSN, int.Parse(X), int.Parse(Y))); //LabelStatus(Controllabel, $"Номер платы {TB.Text} /n успешно соединен с номером приемника", Color.Green);
                     }
                    
-                    AddToOperLogFasStart(); //Добавляем в лог данные
-                    ShiftCounter = ShiftCounter + 1; //+ к выпуску
+                    AddToOperLogFasStart(FullSTBSN); //Добавляем в лог данные
+                    ShiftCounter += + 1; //+ к выпуску
+                    LotCounter += 1;
                     ShiftCounterl.Text = ShiftCounter.ToString(); //Обновляем лейбл
+                    LB_LOTCounter.Text = LotCounter.ToString();
                     ShiftCounterUpdate(); //обновляем ShiftCounter
+                    LotCounterUpdate();
                     DG_UpLog.Rows.Add(ShiftCounter,FullSTBSN,TB.Text, PrintBool,DateTime.UtcNow.AddHours(2));//Добавляем в грид строку
                     DG_UpLog.Sort(DG_UpLog.Columns[0], System.ComponentModel.ListSortDirection.Descending); //Сортировка
+                    { LabelStatus(Controllabel, $"Прошло успешно!", Color.Green); return; }
                 }
                 else if (FullSNPCB.Length != 23)
                 {
                     LabelStatus(Controllabel, $"Серийный номeр не сформирован!", Color.Red);
                     update();
                 }
-            }
-            else
-            {                
-              LabelStatus(Controllabel, $"{TB.Text} не верный формат номера", Color.Red); return;               
-            }
+                          
+                          
+            
         }
 
-        void GetDate()
+        bool GetDate()
         {
-            if (this.DateFas_Start)
-                DateText = DateTime.UtcNow.AddHours(2);
+            var Basedate = CheckBaseDate();
+            if (Basedate == "False")
+                return true;
+
+            if (!string.IsNullOrEmpty(Basedate))
+            {
+                DateText = DateTime.Parse(Basedate + " " + DateTime.Now.ToString("HH:mm:ss")); GetLineForPrint(15); return false;     
+            }
+            else if (this.DateFas_Start)
+            { DateText = DateTime.UtcNow.AddHours(2); return false; }
             else
-                DateText = DateTime.Parse(DateFas_ST_Text + " " + DateTime.Now.ToString("HH:mm:ss"));
+            { DateText = DateTime.Parse(DateFas_ST_Text + " " + DateTime.Now.ToString("HH:mm:ss")); return false; }
+            }
+
+        string CheckBaseDate()
+        {
+            using (var FAS = new FASEntities())
+            {
+                var Result = FAS.FAS_GS_LOTs.Where(c => c.LOTID == LOTID).Select(c => c.Fixed_Range).FirstOrDefault();
+
+                if (Result != true)
+                    return "";
+
+                var ResultDate = FAS.FAS_GS_LOTs.Where(c => c.LOTID == LOTID).Select(c => c.Fixed_Range_Date).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(ResultDate.ToString()))
+                    return "False";
+
+                return FAS.FAS_GS_LOTs.Where(c => c.LOTID == LOTID).Select(c => c.Fixed_Range_Date).FirstOrDefault().Value.ToString("dd.MM.yyyy");
+            }
         }
 
 
         void update()
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 int _serNumber = int.Parse(SerNumber);
                 var F = FAS.FAS_SerialNumbers.Where(c => c.SerialNumber == _serNumber);
                 F.FirstOrDefault().IsActive = false;
                 FAS.SaveChanges();
             }
-        }
-        //void ShiftCounterUpdate()
-        //{
-        //    using (FASEntities1 FAS = new FASEntities1())
-        //    {
-        //        var F = FAS.FAS_ShiftsCounter.Where(c => c.ID == ShiftCounterID);
-        //        F.FirstOrDefault().ShiftCounter = ShiftCounter;
-        //        FAS.SaveChanges();
-        //    }
-
-        //}
-
+        }      
         
         void print(string content)
         {
@@ -166,28 +263,24 @@ namespace GS_STB.Class_Modules
                 }
                 UpdateSerialNumber(FullSTBSN, _serialNumer);
                 return false;
-            }
-
-          
+            }          
         }
 
         void UpdateSerialNumber(string FullSTBSN,int serialNumer)
         {
-            using (var FAS = new FASEntities1())
+            using (var FAS = new FASEntities())
             {
                 int _serNumber = serialNumer;
                 var _fas = FAS.FAS_Start.Where(c => c.SerialNumber == _serNumber);
                 _fas.FirstOrDefault().FullSTBSN = FullSTBSN;
                 _fas.FirstOrDefault().AssemblyByID = (short)UserID;
-                FAS.SaveChanges();
-               
+                FAS.SaveChanges();               
             }
         }
 
-
         string GenerateFullSTBSN(int serialnumber)
         {
-            using (FASEntities1 f = new FASEntities1())
+            using (FASEntities f = new FASEntities())
             {
                 string FullSTBSN;
                 int _serNumber = serialnumber;
@@ -234,7 +327,7 @@ namespace GS_STB.Class_Modules
 
         bool TempSN()
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 var  _serialNumber = FAS.FAS_SerialNumbers.Where(c => c.LOTID == LOTID & c.IsUsed == false).Select(c=>c.SerialNumber).FirstOrDefault();
                 if (_serialNumber == 0)
@@ -245,7 +338,7 @@ namespace GS_STB.Class_Modules
 
         void InsertFasStart(int serialnumber)
         {           
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 var fas_start = new FAS_Start()
                 {
@@ -263,7 +356,7 @@ namespace GS_STB.Class_Modules
 
         int GetSerialNumber()
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 return FAS.FAS_SerialNumbers.Where(c => c.LOTID == (short)LOTID && c.IsUsed == false).Select(c => c.SerialNumber).Take(1).FirstOrDefault();
             }
@@ -271,7 +364,7 @@ namespace GS_STB.Class_Modules
 
         void updateSerNum(int serialNumber) 
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 var FAS_S = FAS.FAS_SerialNumbers.Where(c=>c.SerialNumber == serialNumber);
                 FAS_S.FirstOrDefault().IsUsed = true;
@@ -282,7 +375,7 @@ namespace GS_STB.Class_Modules
 
         int CheckSerialNumer(int serialnumber)
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 return FAS.FAS_SerialNumbers.Where(c => c.SerialNumber == serialnumber && c.PrintStationID == StationID).Select(c => c.SerialNumber).FirstOrDefault();
 
@@ -292,9 +385,22 @@ namespace GS_STB.Class_Modules
 
         string CheckAssemlyPCBID()
         {
-            using (FASEntities1 FAS = new FASEntities1())
-            {                
-                return  FAS.FAS_Start.Where(v => v.PCBID == PCBID).Select(c => c.FullSTBSN).FirstOrDefault();               
+            using (FASEntities FAS = new FASEntities())
+            {
+                var SerNum = FAS.FAS_Start.Where(v => v.PCBID == PCBID).Select(c => c.SerialNumber).FirstOrDefault();
+                if (SerNum == 0)
+                    return "";
+
+                _Lot = (from Se in FAS.FAS_SerialNumbers
+                        join GS in FAS.FAS_GS_LOTs on Se.LOTID equals GS.LOTID
+                        where Se.SerialNumber == SerNum
+                        select GS.FULL_LOT_Code).FirstOrDefault();
+                
+
+                if (_Lot == this.LOTID.ToString())
+                    return FAS.FAS_Start.Where(c => c.PCBID == PCBID).Select(c => c.FullSTBSN).FirstOrDefault();
+
+                return "False";
             }
         }
 
@@ -304,7 +410,7 @@ namespace GS_STB.Class_Modules
             {
                 PCBID = SMD.LazerBase.Where(c => c.Content == barcode).Select(c => c.IDLaser).FirstOrDefault(); //LazerBase
                 if (PCBID == 0)
-                  return true;                                
+                  return true;
 
                 var check = SMD.THTStart.Where(c => c.PCBserial == barcode).Select(c => c.PCBserial == c.PCBserial).FirstOrDefault(); //THTStart
 
@@ -329,19 +435,19 @@ namespace GS_STB.Class_Modules
 
         void GetLot(DataGridView Grid)
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 var list = from Lot in FAS.FAS_GS_LOTs
                            join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID
                            join Label in FAS.FAS_LabelScenario on Lot.LabelScenarioID equals Label.ID
-                           where Lot.IsActive == true orderby Lot.LOTCode descending
+                           where Lot.IsActive == true orderby Lot.LOTID descending
                            select new
                            {
                                Lot = Lot.LOTCode,
                                Full_Lot = Lot.FULL_LOT_Code,
                                Model = model.ModelName,
                                InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true  & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                Lot.LOTID,
                                Label.Scenario
@@ -352,7 +458,7 @@ namespace GS_STB.Class_Modules
             }
         }
 
-        string LabelSN(string printTextSN, string printCodeSN,int X = 20,int Y = 30)
+        string LabelSN(string printTextSN, string printCodeSN,int X ,int Y )
         {         
             string L = $@"
 ^ XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH20,30^JMA^PR2,2^MD10^JUS^LRN^CI0^XZ

@@ -4,32 +4,34 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="07a20cc33eef487990d76fc59d4f4acc" Name="Diagram1">
+      <Diagram DiagramId="1055207037eb4ee685a72d215eeb6873" Name="Diagram1">
         <EntityTypeShape EntityType="FASModel.FAS_App_ListForPC" Width="1.5" PointX="11" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Applications" Width="1.5" PointX="8.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Breaks" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_CERT" Width="1.5" PointX="8.25" PointY="21.625" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_Disassembly" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_ErrorCode" Width="1.5" PointX="10.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_ErrorCodeGroup" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.Fas_Depo_Test_Result" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_Disassembly" Width="1.5" PointX="10.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_ErrorCode" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_ErrorCodeGroup" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_GS_LOTs" Width="1.5" PointX="5.25" PointY="7.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_HDCP" Width="1.5" PointX="8.25" PointY="24.25" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_LabelScenario" Width="1.5" PointX="3" PointY="6.875" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Lines" Width="1.5" PointX="8.75" PointY="18.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_LineType" Width="1.5" PointX="10.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_LineType" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Liter" Width="1.5" PointX="12.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_MicronSN" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Model_Type" Width="1.5" PointX="0.75" PointY="14.5" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Models" Width="1.5" PointX="3" PointY="14.375" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_OperationLog" Width="1.5" PointX="13.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_PackingCounter" Width="1.5" PointX="14.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_OperationLog" Width="1.5" PointX="14.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_PackingCounter" Width="1.5" PointX="14.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_PackingGS" Width="1.5" PointX="8.25" PointY="9.875" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_SerialNumbers" Width="1.5" PointX="6" PointY="2.125" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_ShiftPlan" Width="1.5" PointX="14.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_ShiftPlan" Width="1.5" PointX="15.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_ShiftsCounter" Width="1.5" PointX="13" PointY="5" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_ShiftsDescription" Width="1.5" PointX="10.75" PointY="5.625" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Start" Width="1.5" PointX="8.25" PointY="5.875" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Stations" Width="1.5" PointX="6" PointY="15.875" IsExpanded="true" />
-        <EntityTypeShape EntityType="FASModel.FAS_TempSerialNumbers1" Width="1.5" PointX="15.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FASModel.FAS_TempSerialNumbers1" Width="1.5" PointX="15.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Upload" Width="1.5" PointX="8.25" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_UserGroup" Width="1.5" PointX="0.75" PointY="10.5" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Users" Width="1.5" PointX="3" PointY="9.875" IsExpanded="true" />

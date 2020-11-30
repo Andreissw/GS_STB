@@ -13,10 +13,10 @@ namespace GS_STB
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class FASEntities1 : DbContext
+    public partial class FASEntities : DbContext
     {
-        public FASEntities1()
-            : base("name=FASEntities1")
+        public FASEntities()
+            : base("name=FASEntities")
         {
         }
     
@@ -29,6 +29,7 @@ namespace GS_STB
         public virtual DbSet<FAS_Applications> FAS_Applications { get; set; }
         public virtual DbSet<FAS_Breaks> FAS_Breaks { get; set; }
         public virtual DbSet<FAS_CERT> FAS_CERT { get; set; }
+        public virtual DbSet<Fas_Depo_Test_Result> Fas_Depo_Test_Result { get; set; }
         public virtual DbSet<FAS_Disassembly> FAS_Disassembly { get; set; }
         public virtual DbSet<FAS_ErrorCode> FAS_ErrorCode { get; set; }
         public virtual DbSet<FAS_ErrorCodeGroup> FAS_ErrorCodeGroup { get; set; }
@@ -38,6 +39,7 @@ namespace GS_STB
         public virtual DbSet<FAS_Lines> FAS_Lines { get; set; }
         public virtual DbSet<FAS_LineType> FAS_LineType { get; set; }
         public virtual DbSet<FAS_Liter> FAS_Liter { get; set; }
+        public virtual DbSet<FAS_MicronSN> FAS_MicronSN { get; set; }
         public virtual DbSet<FAS_Model_Type> FAS_Model_Type { get; set; }
         public virtual DbSet<FAS_Models> FAS_Models { get; set; }
         public virtual DbSet<FAS_OperationLog> FAS_OperationLog { get; set; }

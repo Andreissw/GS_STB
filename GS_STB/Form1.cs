@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
+using System.Management;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -20,12 +21,18 @@ namespace GS_STB
             InitializeComponent();
             GetListApp();
             GetModule();//Вывод списка в ЛистБокс            
-            List<BaseClass> ListClasses = new List<BaseClass>() { new FAS_END(), new UploadStation(), new FASStart(), new Desassembly_STB(), new FAS_Weight_control(),  };
-             
+            List<BaseClass> ListClasses = new List<BaseClass>() { new FAS_END(), new UploadStation(), new FASStart(), new Desassembly_STB(), new FAS_Weight_control(), };
+
             BT_OK.Click += (a, e) => // Событие нажатие кнопки
-            { 
+            {               
                 if (CheckIndex()) OpenModule(ListClasses[listBox1.SelectedIndex]);  
-            };           
+            };
+
+            listBox1.DoubleClick += (a, e) => // Событие нажатие кнопки
+            {
+                if (CheckIndex()) OpenModule(ListClasses[listBox1.SelectedIndex]);
+            };
+
 
         }
         protected List<string> ListApp = new List<string>() {  };
@@ -38,7 +45,7 @@ namespace GS_STB
 
         void GetListApp()
         {
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {   short[] sh = new short[]{4,3,5,20,2};
                 ListApp.AddRange(Fas.FAS_Applications.Where(c => sh.Contains(c.App_ID)).Select(c => c.App_Name).AsEnumerable());
             }
@@ -48,13 +55,20 @@ namespace GS_STB
         {
             if (listBox1.SelectedIndex == -1)
             { MessageBox.Show("Выберите модуль");  return false; }
+            //if (listBox1.SelectedIndex == 1 || listBox1.SelectedIndex == 2)
+            //    return true;
             return true;
+
         }
 
         void OpenModule(BaseClass BC) //Открытие определенного класса
-        {
+        {            
             SettingsForm settingsForm = new SettingsForm(BC);
-            settingsForm.ShowDialog();
+            this.ShowInTaskbar = false;
+            this.WindowState = FormWindowState.Minimized;
+            var r = settingsForm.ShowDialog();
+            this.ShowInTaskbar = true;
+            this.WindowState = FormWindowState.Maximized;
         }
 
     }

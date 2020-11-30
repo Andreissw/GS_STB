@@ -23,6 +23,7 @@ namespace GS_STB
         public short ModelID { get; set; }
         public string ModelName { get; set; }
         public byte ModelTypeID { get; set; }
+        public string DelaySetting { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FAS_GS_LOTs> FAS_GS_LOTs { get; set; }

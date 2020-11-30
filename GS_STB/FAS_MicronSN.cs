@@ -12,21 +12,17 @@ namespace GS_STB
     using System;
     using System.Collections.Generic;
     
-    public partial class FAS_OperationLog
+    public partial class FAS_MicronSN
     {
         public int ID { get; set; }
-        public int PCBID { get; set; }
-        public byte ProductionAreaID { get; set; }
-        public short StationID { get; set; }
-        public short ApplicationID { get; set; }
-        public System.DateTime StateCodeDate { get; set; }
-        public short StateCodeByID { get; set; }
-        public Nullable<int> SerialNumber { get; set; }
-        public Nullable<bool> Reprint { get; set; }
-        public Nullable<bool> ReUpload { get; set; }
-        public Nullable<System.DateTime> OldLabelDate { get; set; }
-        public Nullable<long> SmartCardId { get; set; }
-        public string FullSTBSN { get; set; }
-        public string CASID { get; set; }
+        public string DevEUI { get; set; }
+        public string ShortSN { get; set; }
+        public string QR_Code { get; set; }
+        public bool Is_Printed { get; set; }
+        public Nullable<int> PrintByID { get; set; }
+        public Nullable<System.DateTime> PrintDate { get; set; }
+        public bool Is_RePrinted { get; set; }
+        public Nullable<int> RePrintByID { get; set; }
+        public Nullable<System.DateTime> RePrintDate { get; set; }
     }
 }

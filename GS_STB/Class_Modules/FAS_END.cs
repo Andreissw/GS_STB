@@ -61,8 +61,7 @@ namespace GS_STB.Class_Modules
                     }
                 }
             }
-            ShiftCounterStart(control);
-
+            ShiftCounterStart();
 
         }
         public override void KeyDownMethod()
@@ -136,7 +135,7 @@ namespace GS_STB.Class_Modules
         }
         ArrayList GetSerialNum(int shortSN)
         {
-            using (var Fas = new FASEntities1())
+            using (var Fas = new FASEntities())
             {
                 var ArrayList = new ArrayList();
                 var list = (from S in Fas.FAS_SerialNumbers
@@ -154,7 +153,7 @@ namespace GS_STB.Class_Modules
 
         ArrayList GetInfoPac(int serial)
         {
-            using (var Fas = new FASEntities1())
+            using (var Fas = new FASEntities())
             {
                 var ArrayList = new ArrayList();
                 var list = (from pac in Fas.FAS_PackingGS
@@ -203,7 +202,7 @@ namespace GS_STB.Class_Modules
 
         string GetLiter()
         {
-            using (var Fas = new FASEntities1())
+            using (var Fas = new FASEntities())
             {
                 var linename = ArrayList[2].ToString();
                 return Fas.FAS_Liter.Where(c => c.Description == linename).Select(c => c.LiterName).FirstOrDefault();
@@ -212,7 +211,7 @@ namespace GS_STB.Class_Modules
 
         string GetLiterID()
         {
-            using (var Fas = new FASEntities1())
+            using (var Fas = new FASEntities())
             {
                 var linename = ArrayList[2].ToString();
                 return Fas.FAS_Liter.Where(c => c.Description == linename).Select(c => c.ID).FirstOrDefault().ToString();
@@ -221,7 +220,7 @@ namespace GS_STB.Class_Modules
        List<GridInfo> GetDatePac(short palletNum, short BoxNum,byte literID,short litterIndex)
         {
 
-            using (var Fas = new FASEntities1())
+            using (var Fas = new FASEntities())
             {
                 var ArrayList = new ArrayList();
                 
@@ -238,7 +237,7 @@ namespace GS_STB.Class_Modules
         ArrayList GetpackingCounter()
         {
 
-            using (var Fas = new FASEntities1())
+            using (var Fas = new FASEntities())
             {
                 var ArrayList = new ArrayList();
                 var list = (from pac in Fas.FAS_PackingCounter
@@ -255,7 +254,7 @@ namespace GS_STB.Class_Modules
 
         void AddPacCounter()
         {
-            using (var FAS = new FASEntities1())
+            using (var FAS = new FASEntities())
             {
                 var Pac = new FAS_PackingCounter()
                 {
@@ -272,7 +271,7 @@ namespace GS_STB.Class_Modules
 
         bool CheckCounter()
         {
-            using (var FAS = new FASEntities1())
+            using (var FAS = new FASEntities())
             {
                 return FAS.FAS_PackingCounter.Where(c => c.LOTID == LOTID & c.LineID == LineID).Select(c => c.ID == c.ID).FirstOrDefault();
             }
@@ -283,11 +282,11 @@ namespace GS_STB.Class_Modules
 
         void GetLot(DataGridView Grid)
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 var list = from Lot in FAS.FAS_GS_LOTs
                            join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID                        
-                           where Lot.IsActive == true                          
+                           where Lot.IsActive == true orderby LOTID descending                     
                            select new
                            {
                                Lot = Lot.LOTCode,
@@ -298,7 +297,7 @@ namespace GS_STB.Class_Modules
                                Lot.PalletCapacity,
                                Lot.LOTID,
                                InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                                            
                            };

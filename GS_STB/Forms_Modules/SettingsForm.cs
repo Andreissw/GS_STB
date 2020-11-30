@@ -108,7 +108,7 @@ namespace GS_STB.Forms_Modules
 
         void updateLine()
         {
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {
                 var App = Fas.FAS_App_ListForPC.Where(c => c.StationID == BaseC.StationID & c.App_ID == BaseC.IDApp);
                 App.FirstOrDefault().LineID = (byte)this.LineID;
@@ -119,7 +119,7 @@ namespace GS_STB.Forms_Modules
 
         void AddLine()
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 var App = new FAS_App_ListForPC()
                 {
@@ -135,7 +135,7 @@ namespace GS_STB.Forms_Modules
 
         void GetLineID()
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 LineID = FAS.FAS_Lines.Where(c => c.LineName == CB_Line.Text).Select(c => c.LineID).FirstOrDefault();
             }
@@ -143,7 +143,7 @@ namespace GS_STB.Forms_Modules
 
         bool CheckApp()
         {
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {
                 var app = Fas.FAS_App_ListForPC.Where(c => c.StationID == BaseC.StationID && c.App_ID == BaseC.IDApp).Select(c=>c.ID).FirstOrDefault();
                 if (app == 0)
@@ -156,10 +156,12 @@ namespace GS_STB.Forms_Modules
         {
             //Передаем свойства всех элементов формы (Control)  в базовый класс
             BaseC.control = this;
+
             if (BaseC.GetType() == typeof(FAS_Weight_control))
             {
-                WorkForm workForms = new WorkForm(BC);
-                workForms.ShowDialog();
+                WorkForm workForms = new WorkForm(BC);              
+                BaseC.GetPortName();               
+                workForms.ShowDialog();                
                 return;
             }
 
@@ -177,7 +179,7 @@ namespace GS_STB.Forms_Modules
             if (BaseC.GetType() == typeof(FASStart))
             {
                 BaseC.labelCount = int.Parse(TB_LabelSNCount.Text); //Указываем сколько этикеток печатать
-                BaseC.PrintBool = CheckBoxSN.Checked; //Указываем надо ли печатать этикетку
+                BaseC.UpPrintSN = CheckBoxSN.Checked; //Указываем надо ли печатать этикетку
                                                       //Условие выбора сетевого времени или локального указанного вручную
                 if (RB_Server_Time.Checked)
                     BaseC.DateFas_Start = true; //Сетевое
@@ -194,7 +196,7 @@ namespace GS_STB.Forms_Modules
                 BaseC.UpPrintCountID = int.Parse(TB_LabelIDCount.Text); //Количество ID этикеток
                 BaseC.UpPrintCountSN = int.Parse(TBCHSN.Text); //Количество SN этикеток
                 BaseC.CheckBoxDublicateSCID = CheckBoxDublicateSCID.Checked; //Проверка на дубликат в таблице Fas_Upload
-                BaseC.COMPORT = SerialPort.GetPortNames().FirstOrDefault();
+                BaseC.GetPortName();
             }
 
             //Добавление данных в ArrayList из выделенного Лота
@@ -214,10 +216,11 @@ namespace GS_STB.Forms_Modules
                     BaseC.ArrayList.Add(DG_LOTList[i, DG_LOTList.CurrentRow.Index].Value.ToString());
             }
 
-       
+         
             //Открытие формы
-            WorkForm workForm = new WorkForm(BC, LOTID);
-            workForm.ShowDialog();     
+            WorkForm workForm = new WorkForm(BC, LOTID);           
+             workForm.ShowDialog();
+          
         }
 
         void DateVoid()
@@ -232,7 +235,7 @@ namespace GS_STB.Forms_Modules
             LineSettings.Location = new Point(12, 18);
             LineSettings.Size = new Size(406, 138);
 
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {
                 CB_Line.Items.AddRange(Fas.FAS_Lines.Where(c => c.LineName.StartsWith("FAS L")).Select(c=>c.LineName).ToArray());
             }
@@ -240,7 +243,7 @@ namespace GS_STB.Forms_Modules
 
         bool GetLineName() //Получение линии
         {
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {
                 var Name =  (from app in Fas.FAS_App_ListForPC
                                 join line in Fas.FAS_Lines on app.LineID equals line.LineID
@@ -259,7 +262,7 @@ namespace GS_STB.Forms_Modules
         int RegisterStation()//Регистрация компютера 
         {
             
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {
                 var _nameStation = BaseC.ArrayList[1].ToString();
                 var Station = new FAS_Stations()
@@ -278,7 +281,7 @@ namespace GS_STB.Forms_Modules
 
         bool GetStationID()//Берем ID компьютера с базы
         {
-            using (FASEntities1 Fas = new FASEntities1())
+            using (FASEntities Fas = new FASEntities())
             {
                 string NameMachine = BaseC.ArrayList[1].ToString();
                 BaseC.StationID = Fas.FAS_Stations.Where(c => c.StationName == NameMachine).Select(c => c.StationID).FirstOrDefault();
@@ -318,7 +321,7 @@ namespace GS_STB.Forms_Modules
         private void CHSN_CheckedChanged(object sender, EventArgs e)
         {
             if (CHSN.Checked)
-                TBCHSN.Text = "1";
+                TBCHSN.Text = "3";
             if (!CHSN.Checked)
                 TBCHSN.Text = "0";
         }
@@ -326,9 +329,17 @@ namespace GS_STB.Forms_Modules
         private void CHID_CheckedChanged(object sender, EventArgs e)
         {
             if (CHID.Checked)
-                TB_LabelIDCount.Text = "1";
+                TB_LabelIDCount.Text = "2";
             if (!CHID.Checked)
                 TB_LabelIDCount.Text = "0";
+        }
+
+        private void CheckBoxSN_CheckedChanged(object sender, EventArgs e)
+        {
+            if (CheckBoxSN.Checked)
+                TB_LabelSNCount.Text = "2";
+            if (!CheckBoxSN.Checked)
+                TB_LabelSNCount.Text = "0";
         }
     }
 }

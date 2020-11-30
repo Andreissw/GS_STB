@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="Хранилище FASModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="Хранилище FASModel" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="FAS_App_ListForPC">
           <Key>
             <PropertyRef Name="ID" />
@@ -44,6 +44,16 @@
           <Property Name="SerialNumber" Type="int" Nullable="false" />
           <Property Name="CERTName" Type="nvarchar" MaxLength="15" Nullable="false" />
           <Property Name="CertContent" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Fas_Depo_Test_Result">
+          <Key>
+            <PropertyRef Name="SN" />
+          </Key>
+          <Property Name="SN" Type="int" Nullable="false" />
+          <Property Name="ResultFileName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ResultData" Type="varbinary" MaxLength="500" />
+          <Property Name="RegDate" Type="datetime" />
+          <Property Name="Count" Type="nvarchar(max)" />
         </EntityType>
         <EntityType Name="FAS_Disassembly">
           <Key>
@@ -109,6 +119,7 @@
           <Property Name="Fixed_Range" Type="bit" />
           <Property Name="Fixed_Range_Date" Type="date" />
           <Property Name="GetWeight" Type="bit" />
+          <Property Name="DelaySetting" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="FAS_HDCP">
           <Key>
@@ -153,6 +164,21 @@
           <Property Name="Description" Type="nvarchar" MaxLength="20" Nullable="false" />
           <Property Name="LineID" Type="smallint" />
         </EntityType>
+        <EntityType Name="FAS_MicronSN">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DevEUI" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="ShortSN" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="QR_Code" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Is_Printed" Type="bit" Nullable="false" />
+          <Property Name="PrintByID" Type="int" />
+          <Property Name="PrintDate" Type="datetime" />
+          <Property Name="Is_RePrinted" Type="bit" Nullable="false" />
+          <Property Name="RePrintByID" Type="int" />
+          <Property Name="RePrintDate" Type="datetime" />
+        </EntityType>
         <EntityType Name="FAS_Model_Type">
           <Key>
             <PropertyRef Name="ModelTipeID" />
@@ -168,6 +194,7 @@
           <Property Name="ModelID" Type="smallint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ModelName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="ModelTypeID" Type="tinyint" Nullable="false" />
+          <Property Name="DelaySetting" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="FAS_OperationLog">
           <Key>
@@ -185,6 +212,8 @@
           <Property Name="ReUpload" Type="bit" />
           <Property Name="OldLabelDate" Type="datetime" />
           <Property Name="SmartCardId" Type="bigint" />
+          <Property Name="FullSTBSN" Type="nvarchar" MaxLength="23" />
+          <Property Name="CASID" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="FAS_PackingCounter">
           <Key>
@@ -585,6 +614,7 @@
           <EntitySet Name="FAS_Applications" EntityType="Self.FAS_Applications" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Breaks" EntityType="Self.FAS_Breaks" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_CERT" EntityType="Self.FAS_CERT" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Fas_Depo_Test_Result" EntityType="Self.Fas_Depo_Test_Result" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Disassembly" EntityType="Self.FAS_Disassembly" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_ErrorCode" EntityType="Self.FAS_ErrorCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_ErrorCodeGroup" EntityType="Self.FAS_ErrorCodeGroup" Schema="dbo" store:Type="Tables" />
@@ -594,6 +624,7 @@
           <EntitySet Name="FAS_Lines" EntityType="Self.FAS_Lines" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_LineType" EntityType="Self.FAS_LineType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Liter" EntityType="Self.FAS_Liter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FAS_MicronSN" EntityType="Self.FAS_MicronSN" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Model_Type" EntityType="Self.FAS_Model_Type" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_Models" EntityType="Self.FAS_Models" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_OperationLog" EntityType="Self.FAS_OperationLog" Schema="dbo" store:Type="Tables" />
@@ -692,8 +723,7 @@
             <End Role="FAS_WeightStation" EntitySet="FAS_WeightStation" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="FASModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -740,6 +770,16 @@
           <Property Name="CERTName" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="CertContent" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="FAS_SerialNumbers" Relationship="Self.FK_FAS_CERT_FAS_SerialNumbers" FromRole="FAS_CERT" ToRole="FAS_SerialNumbers" />
+        </EntityType>
+        <EntityType Name="Fas_Depo_Test_Result">
+          <Key>
+            <PropertyRef Name="SN" />
+          </Key>
+          <Property Name="SN" Type="Int32" Nullable="false" />
+          <Property Name="ResultFileName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ResultData" Type="Binary" MaxLength="500" FixedLength="false" />
+          <Property Name="RegDate" Type="DateTime" Precision="3" />
+          <Property Name="Count" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="FAS_Disassembly">
           <Key>
@@ -810,6 +850,7 @@
           <NavigationProperty Name="FAS_Users" Relationship="Self.FK_FAS_GS_LOTs_FAS_Users" FromRole="FAS_GS_LOTs" ToRole="FAS_Users" />
           <NavigationProperty Name="FAS_Users1" Relationship="Self.FK_FAS_GS_LOTs_FAS_Users1" FromRole="FAS_GS_LOTs" ToRole="FAS_Users" />
           <NavigationProperty Name="FAS_WorkingScenario" Relationship="Self.FK_FAS_GS_LOTs_FAS_WorkingScenario" FromRole="FAS_GS_LOTs" ToRole="FAS_WorkingScenario" />
+          <Property Name="DelaySetting" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="FAS_HDCP">
           <Key>
@@ -857,6 +898,21 @@
           <Property Name="Description" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="LineID" Type="Int16" />
         </EntityType>
+        <EntityType Name="FAS_MicronSN">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DevEUI" Type="String" MaxLength="20" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="ShortSN" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="QR_Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="Is_Printed" Type="Boolean" Nullable="false" />
+          <Property Name="PrintByID" Type="Int32" />
+          <Property Name="PrintDate" Type="DateTime" Precision="3" />
+          <Property Name="Is_RePrinted" Type="Boolean" Nullable="false" />
+          <Property Name="RePrintByID" Type="Int32" />
+          <Property Name="RePrintDate" Type="DateTime" Precision="3" />
+        </EntityType>
         <EntityType Name="FAS_Model_Type">
           <Key>
             <PropertyRef Name="ModelTipeID" />
@@ -875,6 +931,7 @@
           <Property Name="ModelTypeID" Type="Byte" Nullable="false" />
           <NavigationProperty Name="FAS_GS_LOTs" Relationship="Self.FK_FAS_GS_LOTs_FAS_Models" FromRole="FAS_Models" ToRole="FAS_GS_LOTs" />
           <NavigationProperty Name="FAS_Model_Type" Relationship="Self.FK_FAS_Models_FAS_Model_Type" FromRole="FAS_Models" ToRole="FAS_Model_Type" />
+          <Property Name="DelaySetting" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="FAS_OperationLog">
           <Key>
@@ -892,6 +949,8 @@
           <Property Name="ReUpload" Type="Boolean" />
           <Property Name="OldLabelDate" Type="DateTime" Precision="3" />
           <Property Name="SmartCardId" Type="Int64" />
+          <Property Name="FullSTBSN" Type="String" MaxLength="23" FixedLength="false" Unicode="true" />
+          <Property Name="CASID" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="FAS_PackingCounter">
           <Key>
@@ -1312,11 +1371,12 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityContainer Name="FASEntities1" annotation:LazyLoadingEnabled="true">
+        <EntityContainer Name="FASEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="FAS_App_ListForPC" EntityType="Self.FAS_App_ListForPC" />
           <EntitySet Name="FAS_Applications" EntityType="Self.FAS_Applications" />
           <EntitySet Name="FAS_Breaks" EntityType="Self.FAS_Breaks" />
           <EntitySet Name="FAS_CERT" EntityType="Self.FAS_CERT" />
+          <EntitySet Name="Fas_Depo_Test_Result" EntityType="Self.Fas_Depo_Test_Result" />
           <EntitySet Name="FAS_Disassembly" EntityType="Self.FAS_Disassembly" />
           <EntitySet Name="FAS_ErrorCode" EntityType="Self.FAS_ErrorCode" />
           <EntitySet Name="FAS_ErrorCodeGroup" EntityType="Self.FAS_ErrorCodeGroup" />
@@ -1326,6 +1386,7 @@
           <EntitySet Name="FAS_Lines" EntityType="Self.FAS_Lines" />
           <EntitySet Name="FAS_LineType" EntityType="Self.FAS_LineType" />
           <EntitySet Name="FAS_Liter" EntityType="Self.FAS_Liter" />
+          <EntitySet Name="FAS_MicronSN" EntityType="Self.FAS_MicronSN" />
           <EntitySet Name="FAS_Model_Type" EntityType="Self.FAS_Model_Type" />
           <EntitySet Name="FAS_Models" EntityType="Self.FAS_Models" />
           <EntitySet Name="FAS_OperationLog" EntityType="Self.FAS_OperationLog" />
@@ -1429,7 +1490,7 @@
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="Хранилище FASModelContainer" CdmEntityContainer="FASEntities1">
+        <EntityContainerMapping StorageEntityContainer="Хранилище FASModelContainer" CdmEntityContainer="FASEntities">
           <EntitySetMapping Name="FAS_App_ListForPC">
             <EntityTypeMapping TypeName="FASModel.FAS_App_ListForPC">
               <MappingFragment StoreEntitySet="FAS_App_ListForPC">
@@ -1474,6 +1535,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Fas_Depo_Test_Result">
+            <EntityTypeMapping TypeName="FASModel.Fas_Depo_Test_Result">
+              <MappingFragment StoreEntitySet="Fas_Depo_Test_Result">
+                <ScalarProperty Name="SN" ColumnName="SN" />
+                <ScalarProperty Name="ResultFileName" ColumnName="ResultFileName" />
+                <ScalarProperty Name="ResultData" ColumnName="ResultData" />
+                <ScalarProperty Name="RegDate" ColumnName="RegDate" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="FAS_Disassembly">
             <EntityTypeMapping TypeName="FASModel.FAS_Disassembly">
               <MappingFragment StoreEntitySet="FAS_Disassembly">
@@ -1512,6 +1584,7 @@
           <EntitySetMapping Name="FAS_GS_LOTs">
             <EntityTypeMapping TypeName="FASModel.FAS_GS_LOTs">
               <MappingFragment StoreEntitySet="FAS_GS_LOTs">
+                <ScalarProperty Name="DelaySetting" ColumnName="DelaySetting" />
                 <ScalarProperty Name="LOTID" ColumnName="LOTID" />
                 <ScalarProperty Name="LOTCode" ColumnName="LOTCode" />
                 <ScalarProperty Name="FULL_LOT_Code" ColumnName="FULL_LOT_Code" />
@@ -1591,6 +1664,22 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="FAS_MicronSN">
+            <EntityTypeMapping TypeName="FASModel.FAS_MicronSN">
+              <MappingFragment StoreEntitySet="FAS_MicronSN">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DevEUI" ColumnName="DevEUI" />
+                <ScalarProperty Name="ShortSN" ColumnName="ShortSN" />
+                <ScalarProperty Name="QR_Code" ColumnName="QR_Code" />
+                <ScalarProperty Name="Is_Printed" ColumnName="Is_Printed" />
+                <ScalarProperty Name="PrintByID" ColumnName="PrintByID" />
+                <ScalarProperty Name="PrintDate" ColumnName="PrintDate" />
+                <ScalarProperty Name="Is_RePrinted" ColumnName="Is_RePrinted" />
+                <ScalarProperty Name="RePrintByID" ColumnName="RePrintByID" />
+                <ScalarProperty Name="RePrintDate" ColumnName="RePrintDate" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="FAS_Model_Type">
             <EntityTypeMapping TypeName="FASModel.FAS_Model_Type">
               <MappingFragment StoreEntitySet="FAS_Model_Type">
@@ -1603,6 +1692,7 @@
           <EntitySetMapping Name="FAS_Models">
             <EntityTypeMapping TypeName="FASModel.FAS_Models">
               <MappingFragment StoreEntitySet="FAS_Models">
+                <ScalarProperty Name="DelaySetting" ColumnName="DelaySetting" />
                 <ScalarProperty Name="ModelID" ColumnName="ModelID" />
                 <ScalarProperty Name="ModelName" ColumnName="ModelName" />
                 <ScalarProperty Name="ModelTypeID" ColumnName="ModelTypeID" />
@@ -1612,6 +1702,8 @@
           <EntitySetMapping Name="FAS_OperationLog">
             <EntityTypeMapping TypeName="FASModel.FAS_OperationLog">
               <MappingFragment StoreEntitySet="FAS_OperationLog">
+                <ScalarProperty Name="CASID" ColumnName="CASID" />
+                <ScalarProperty Name="FullSTBSN" ColumnName="FullSTBSN" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PCBID" ColumnName="PCBID" />
                 <ScalarProperty Name="ProductionAreaID" ColumnName="ProductionAreaID" />

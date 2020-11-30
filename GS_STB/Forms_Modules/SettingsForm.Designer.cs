@@ -44,7 +44,6 @@
             this.Fas_Start = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.CheckBoxSN = new System.Windows.Forms.CheckBox();
-            this.Button2 = new System.Windows.Forms.Button();
             this.TB_LabelSNCount = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.DateTimePicker = new System.Windows.Forms.DateTimePicker();
@@ -81,7 +80,7 @@
             // 
             this.GBInfo.Controls.Add(this.BT_OpenSettings);
             this.GBInfo.Controls.Add(this.GridInfo);
-            this.GBInfo.Location = new System.Drawing.Point(1042, 9);
+            this.GBInfo.Location = new System.Drawing.Point(827, 16);
             this.GBInfo.Name = "GBInfo";
             this.GBInfo.Size = new System.Drawing.Size(479, 284);
             this.GBInfo.TabIndex = 1;
@@ -94,7 +93,7 @@
             this.BT_OpenSettings.FlatAppearance.BorderSize = 0;
             this.BT_OpenSettings.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BT_OpenSettings.Image = global::GS_STB.Properties.Resources.settings__1_;
-            this.BT_OpenSettings.Location = new System.Drawing.Point(404, 210);
+            this.BT_OpenSettings.Location = new System.Drawing.Point(6, 217);
             this.BT_OpenSettings.Name = "BT_OpenSettings";
             this.BT_OpenSettings.Size = new System.Drawing.Size(69, 63);
             this.BT_OpenSettings.TabIndex = 42;
@@ -114,7 +113,7 @@
             this.Column2});
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("MS Reference Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
@@ -209,9 +208,9 @@
             // 
             this.Fas_Start.Controls.Add(this.groupBox3);
             this.Fas_Start.Controls.Add(this.groupBox2);
-            this.Fas_Start.Location = new System.Drawing.Point(1549, 372);
+            this.Fas_Start.Location = new System.Drawing.Point(827, 306);
             this.Fas_Start.Name = "Fas_Start";
-            this.Fas_Start.Size = new System.Drawing.Size(241, 211);
+            this.Fas_Start.Size = new System.Drawing.Size(251, 214);
             this.Fas_Start.TabIndex = 3;
             this.Fas_Start.TabStop = false;
             this.Fas_Start.Text = "Fas_Start";
@@ -220,11 +219,10 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.CheckBoxSN);
-            this.groupBox3.Controls.Add(this.Button2);
             this.groupBox3.Controls.Add(this.TB_LabelSNCount);
-            this.groupBox3.Location = new System.Drawing.Point(6, 147);
+            this.groupBox3.Location = new System.Drawing.Point(6, 145);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(232, 108);
+            this.groupBox3.Size = new System.Drawing.Size(232, 64);
             this.groupBox3.TabIndex = 38;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Печать этикеток SN ";
@@ -240,16 +238,7 @@
             this.CheckBoxSN.TabIndex = 16;
             this.CheckBoxSN.Text = "Количество этикеток SN";
             this.CheckBoxSN.UseVisualStyleBackColor = true;
-            // 
-            // Button2
-            // 
-            this.Button2.Location = new System.Drawing.Point(9, 67);
-            this.Button2.Name = "Button2";
-            this.Button2.Size = new System.Drawing.Size(149, 23);
-            this.Button2.TabIndex = 9;
-            this.Button2.Text = "Настройки  этикетки";
-            this.Button2.UseVisualStyleBackColor = true;
-            this.Button2.Visible = false;
+            this.CheckBoxSN.CheckedChanged += new System.EventHandler(this.CheckBoxSN_CheckedChanged);
             // 
             // TB_LabelSNCount
             // 
@@ -257,7 +246,7 @@
             this.TB_LabelSNCount.Name = "TB_LabelSNCount";
             this.TB_LabelSNCount.Size = new System.Drawing.Size(33, 20);
             this.TB_LabelSNCount.TabIndex = 8;
-            this.TB_LabelSNCount.Text = "1";
+            this.TB_LabelSNCount.Text = "3";
             // 
             // groupBox2
             // 
@@ -267,7 +256,7 @@
             this.groupBox2.Controls.Add(this.RB_Server_Time);
             this.groupBox2.Location = new System.Drawing.Point(6, 19);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(232, 122);
+            this.groupBox2.Size = new System.Drawing.Size(232, 120);
             this.groupBox2.TabIndex = 21;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Выбор режима даты";
@@ -321,9 +310,9 @@
             this.UploadStationGB.Controls.Add(this.CheckBoxDublicateSCID);
             this.UploadStationGB.Controls.Add(this.TB_LabelIDCount);
             this.UploadStationGB.Controls.Add(this.TBCHSN);
-            this.UploadStationGB.Location = new System.Drawing.Point(1048, 315);
+            this.UploadStationGB.Location = new System.Drawing.Point(1094, 532);
             this.UploadStationGB.Name = "UploadStationGB";
-            this.UploadStationGB.Size = new System.Drawing.Size(207, 92);
+            this.UploadStationGB.Size = new System.Drawing.Size(212, 100);
             this.UploadStationGB.TabIndex = 39;
             this.UploadStationGB.TabStop = false;
             this.UploadStationGB.Text = "UploadStation";
@@ -371,7 +360,7 @@
             this.TB_LabelIDCount.Name = "TB_LabelIDCount";
             this.TB_LabelIDCount.Size = new System.Drawing.Size(33, 20);
             this.TB_LabelIDCount.TabIndex = 22;
-            this.TB_LabelIDCount.Text = "1";
+            this.TB_LabelIDCount.Text = "2";
             // 
             // TBCHSN
             // 
@@ -387,9 +376,9 @@
             this.FAS_Weight.Controls.Add(this.Label16);
             this.FAS_Weight.Controls.Add(this.Label10);
             this.FAS_Weight.Controls.Add(this.TB_AutoSetSNin);
-            this.FAS_Weight.Location = new System.Drawing.Point(1048, 423);
+            this.FAS_Weight.Location = new System.Drawing.Point(1323, 579);
             this.FAS_Weight.Name = "FAS_Weight";
-            this.FAS_Weight.Size = new System.Drawing.Size(97, 31);
+            this.FAS_Weight.Size = new System.Drawing.Size(92, 24);
             this.FAS_Weight.TabIndex = 41;
             this.FAS_Weight.TabStop = false;
             this.FAS_Weight.Text = "FAS_Weight";
@@ -438,7 +427,7 @@
             this.SettingLot.Controls.Add(this.BT_OpenWorkForm);
             this.SettingLot.Location = new System.Drawing.Point(12, 12);
             this.SettingLot.Name = "SettingLot";
-            this.SettingLot.Size = new System.Drawing.Size(1024, 597);
+            this.SettingLot.Size = new System.Drawing.Size(809, 697);
             this.SettingLot.TabIndex = 42;
             this.SettingLot.TabStop = false;
             this.SettingLot.Text = "SettingLot";
@@ -453,7 +442,7 @@
             this.DG_LOTList.Location = new System.Drawing.Point(6, 19);
             this.DG_LOTList.Name = "DG_LOTList";
             this.DG_LOTList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.DG_LOTList.Size = new System.Drawing.Size(910, 572);
+            this.DG_LOTList.Size = new System.Drawing.Size(787, 572);
             this.DG_LOTList.TabIndex = 4;
             this.DG_LOTList.Visible = false;
             // 
@@ -463,7 +452,7 @@
             this.BT_OpenWorkForm.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.BT_OpenWorkForm.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.BT_OpenWorkForm.Image = global::GS_STB.Properties.Resources.play;
-            this.BT_OpenWorkForm.Location = new System.Drawing.Point(922, 496);
+            this.BT_OpenWorkForm.Location = new System.Drawing.Point(704, 597);
             this.BT_OpenWorkForm.Name = "BT_OpenWorkForm";
             this.BT_OpenWorkForm.Size = new System.Drawing.Size(89, 95);
             this.BT_OpenWorkForm.TabIndex = 24;
@@ -476,7 +465,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1881, 831);
+            this.ClientSize = new System.Drawing.Size(1558, 721);
             this.Controls.Add(this.SettingLot);
             this.Controls.Add(this.FAS_Weight);
             this.Controls.Add(this.UploadStationGB);
@@ -518,7 +507,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         internal System.Windows.Forms.GroupBox groupBox3;
         internal System.Windows.Forms.CheckBox CheckBoxSN;
-        internal System.Windows.Forms.Button Button2;
         internal System.Windows.Forms.TextBox TB_LabelSNCount;
         private System.Windows.Forms.GroupBox UploadStationGB;
         internal System.Windows.Forms.CheckBox CHID;

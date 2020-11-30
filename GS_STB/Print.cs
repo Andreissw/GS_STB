@@ -9,7 +9,7 @@ namespace GS_STB
     class Print
     {
 
-        public static string PrintSN(string Model,string PrintTextSn,string printCodeSn,int count,int X,int Y)
+        public static string PrintSN(string Model,string PrintTextSn,string printCodeSn,int count,DateTime DateText,int X,int Y)
         {
             return $@"
 ^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^JUS^LRN^CI0^XZ
@@ -27,9 +27,9 @@ eJzt1M1KxDAQB/CEHPYYwatsHmFfoDT4RF4rVLOwh30LH0UKHjzuIxjpxYNgZBEjhIwzST+268dREDpd
 модель
 ^FT{20+X},{32+Y}^A0N,33,33^FH\^FD{Model}^FS
 дата
-^FT{320+X},{32+Y}^A0N,33,33^FH\^FD{DateTime.UtcNow.AddHours(2).ToString("dd.MM.yyyy")}^FS
+^FT{320+X},{32+Y}^A0N,33,33^FH\^FD{DateText.ToString("dd.MM.yyyy")}^FS
 время
-^FT{490+X},{32+Y}^A0N,33,33^FH\^FD{DateTime.UtcNow.AddHours(2).ToString("HH:mm:ss")}^FS
+^FT{490+X},{32+Y}^A0N,33,33^FH\^FD{DateText.ToString("HH:mm:ss")}^FS
 сн_текст
 ^FT{86+X},{68+Y}^A0N,33,36^FH\^FD{PrintTextSn}^FS
 штрихкод
@@ -56,6 +56,8 @@ made_QC
 ^FT{82 + X},{292+ Y}^A0N,67,67^FH\^FDID^FS
 ^FT{159 + X},{292+Y}^A0N,67,67^FH\^FD{SC_Text}^FS
 ^PQ{labelCount},0,1,Y^XZ";
+
+
 //_положение_ID_
 //^FT{40 + X},{320 + Y}
 //_ориентацияиразмернадписи

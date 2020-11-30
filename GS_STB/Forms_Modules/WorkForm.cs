@@ -25,8 +25,18 @@ namespace GS_STB
         {
             InitializeComponent();
             BaseC = BC;
-            this.Text = BaseC.GetType().Name;
+            this.Text = BaseC.GetType().Name;           
             GetLoggin();//Настройка форма ввода пароля
+            
+            Times.Enabled = true; LBPrintSN.Text = DateTime.Now.ToString("dd.MM.yyyy"); //Настройка времени
+            Controllabel.Text = "";
+
+            CloseApp.Click += (a, e) => 
+            {
+                var Result = MessageBox.Show("Уверены, что хотите выйти?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (Result == DialogResult.Yes)
+                    Application.Exit();
+            };
 
             TB_RFIDIn.KeyDown += (a, e) => //Событие при вводе логина
             {
@@ -46,14 +56,52 @@ namespace GS_STB
             BaseC = BC; //Приведение к типу
             BaseC.LOTID = LOTID;
             this.Text = BaseC.GetType().Name; //Заголовок формы называется именем модулем
-            GetLoggin();//Настройка форма ввода пароля
+            GetLoggin();//Настройка форма ввода пароля           
             Times.Enabled = true; LBPrintSN.Text = DateTime.Now.ToString("dd.MM.yyyy"); //Настройка времени
             Controllabel.Text = "";
+            TestGrid.Rows.Add(12);
 
             //Реализация загрузки определенного класса
 
+            CloseApp.Click += (a, e) =>
+            {
+                var Result = MessageBox.Show("Уверены, что хотите выйти?","Предупреждение",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
+                if (Result == DialogResult.Yes)
+                    Application.Exit();
+
+            };
+
+            BackButton.Click += (a, e) => 
+            {
+                var Result = MessageBox.Show("Уверены, что хотите вернуться в меню настройки?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (Result == DialogResult.Yes)
+                    Close();
+
+            };
+
+            GETSNCH.Click += (a, e) =>
+            {
+                if (GETSNCH.Checked)               
+                    BaseC.CheckGetSN = true;
+                if (!GETSNCH.Checked)
+                    BaseC.CheckGetSN = false;
+
+            };
+
+            BTPrint.Click += (a, e) =>
+             {
+                 if (ListPrinter.SelectedIndex == -1)
+                    { MessageBox.Show("Принтер не выбран"); return; }
+
+                 BaseC.printName = ListPrinter.SelectedItem.ToString();
+                 PrintLBName.Text = "Текущий принтер \n" + BaseC.printName;
+                 ListPrinter.ClearSelected();                 
+             };
+
+
             ClearBT.Click += (a, e) =>
             {
+                //BaseC.cts.Cancel();
                 SerialTextBox.Enabled = true;
                 SerialTextBox.Clear();
                 SerialTextBox.Select();
@@ -71,12 +119,16 @@ namespace GS_STB
             SerialTextBox.KeyDown += (a, e) => //Событие скнирование номера
             {
                 if (e.KeyCode == Keys.Enter)
-                { 
+                {
+                    TestGrid.Rows.Clear();
+                    TestGrid.RowCount = 12;
                     BaseC.KeyDownMethod();
-                    BaseC.control = this;
 
                     if (BaseC.GetType() == typeof(UploadStation))
                         return;
+
+                    if (BaseC.GetType() == typeof(Desassembly_STB))
+                        return;   
 
                     SerialTextBox.Clear(); SerialTextBox.Select();
                 }
@@ -106,8 +158,22 @@ namespace GS_STB
 
             };
 
-            BT_PrinterSettings.Click += (a, e) => { GB_PrinterSettings.Visible = true; };
-            BT_ClosePrintSet.Click += (a, e) => { GB_PrinterSettings.Visible = false; SaveSettingBT.Text = ""; };
+            BT_PrinterSettings.Click += (a, e) => 
+            {
+                GB_PrinterSettings.Visible = true; SettingDelay.Visible = true;
+                foreach (Control item in SettingDelay.Controls)               
+                    if (item.Name.Contains("Delay"))
+                        item.Enabled = true;
+                
+               
+            };
+            BT_ClosePrintSet.Click += (a, e) => 
+            { 
+                GB_PrinterSettings.Visible = false; SettingDelay.Visible = false; SaveSettingBT.Text = ""; SerialTextBox.Select();
+                foreach (Control item in SettingDelay.Controls)
+                    if (item.Name.Contains("Delay"))
+                        item.Enabled = false;
+            };
 
             CB_ErrorCode.TextChanged += (a, e) => 
             {
@@ -122,19 +188,28 @@ namespace GS_STB
                 { MessageBox.Show("Укажите код ошибки"); CB_ErrorCode.Select();  return; }
 
                 if (CheckErrocode(CB_ErrorCode.Text))
-                { MessageBox.Show("Не корректный код ошибки"); CB_ErrorCode.Select(); return; }
+                { MessageBox.Show("Не корректный код ошибки"); CB_ErrorCode.Select();  return; }
 
                 var Dis = new Desassembly_STB();
                 var ErrorCodeID =  Dis.GetErrorCodeID(CB_ErrorCode.Text);
-                var serial = int.Parse(SerialTextBox.Text.Substring(16));
-
+                var serial = int.Parse(SerialTextBox.Text.Substring(15));
+                var smID = GetSmartCardID(serial);
+                var fullStbsn = GetFullSTBSN(serial);
+                var casid = GetCASID(serial);
                 BaseC.WriteToDBDesis(serial, SerialTextBox.Text,ErrorCodeID);
                 BaseC.UpdateToDBDesis(serial);
+                BaseC.DeleteToDBWeight(serial);
                 BaseC.DeleteToDBDesis(serial);
-                BaseC.LabelStatus(Controllabel,$@"Серийный номер { SerialTextBox.Text }/n ОТКРЕПЛЁН УСПЕШНО",Color.Green);
-                BaseC.AddLogDesis(serial, Dis.IDApp);
-                Label_ShiftCounter.Text = (int.Parse(Label_ShiftCounter.Text) + 1).ToString();
+                BaseC.DeleteToUpload(serial);                
+                BaseC.AddLogDesis(serial, Dis.IDApp,smID,fullStbsn,casid);
+                BaseC.LabelStatus(Controllabel, $"Серийный номер { SerialTextBox.Text } \n ОТКРЕПЛЁН УСПЕШНО", Color.Green);
+                BaseC.ShiftCounter += 1;
+                BaseC.LotCounter += 1;
                 BaseC.ShiftCounterUpdate();
+                BaseC.LotCounterUpdate();
+                Label_ShiftCounter.Text = BaseC.ShiftCounter.ToString();
+                LB_LOTCounter.Text = BaseC.LotCounter.ToString();
+                SerialTextBox.Enabled = true;
                 DG_UpLog.Rows.Add(int.Parse(Label_ShiftCounter.Text), SerialTextBox.Text, CB_ErrorCode.Text, DateTime.UtcNow.AddHours(2));
                 DG_UpLog.Sort(DG_UpLog.Columns[0], System.ComponentModel.ListSortDirection.Descending);
                 SerialTextBox.Clear();
@@ -144,6 +219,32 @@ namespace GS_STB
             };
         }
 
+        string GetCASID(int serial)
+        {
+            using (var FAS = new FASEntities())
+            {
+                return FAS.FAS_Upload.Where(c => c.SerialNumber == serial).Select(c => c.CASID).FirstOrDefault();
+            }
+            
+        }
+
+        long GetSmartCardID(int serial)
+        {
+            using (var FAS = new FASEntities())
+            {
+                return FAS.FAS_Upload.Where(c => c.SerialNumber == serial).Select(c => c.SmartCardID).FirstOrDefault();
+            }
+
+        }
+
+        string GetFullSTBSN(int serial)
+        {
+            using (var FAS = new FASEntities())
+            {
+                return FAS.FAS_Start.Where(c => c.SerialNumber == serial).Select(c => c.FullSTBSN).FirstOrDefault();
+            }
+
+        }
         void SaveSettingPrint(GroupBox GB)
         {
             foreach (var n in GB.Controls.OfType<NumericUpDown>())
@@ -160,13 +261,14 @@ namespace GS_STB
 
         bool CheckErrocode(string Err)
         {
-            foreach (var item in CB_ErrorCode.Items)
-            {
-                if (item.ToString() == Err)               
+            foreach (var item in CB_ErrorCode.Items)        
+                if (item.ToString().Contains(Err))
                     return false;
-                return true;
-            }
             return true;
+
+            //if (CB_ErrorCode.Items.Cast<List<string>>().Select(c => c.Contains(Err)).FirstOrDefault())
+            //    return false;
+            //return true;
 
         }
         void GetWorkForm()// Инициализация компонентов рабочей формы
@@ -192,7 +294,7 @@ namespace GS_STB
 
         bool GetUser()
         {
-            using (FASEntities1 FAS = new FASEntities1())
+            using (FASEntities FAS = new FASEntities())
             {
                 UserName = FAS.FAS_Users.Where(c => c.RFID == TB_RFIDIn.Text && c.IsActiv == true).Select(c => c.UserName).FirstOrDefault();
                 if (string.IsNullOrEmpty(UserName))
@@ -221,7 +323,9 @@ namespace GS_STB
             {
                 ListInfoGrid.RemoveRange(3, ListInfoGrid.Count - 3);                
                 ListInfoGrid.Add("Допустимые пределы");
-                BaseC.ArrayList.Add();
+                BaseC.ArrayList.Add("+/-15");
+                ListInfoGrid.Add("Вес коробки");
+                BaseC.ArrayList.Add(150);
             }
 
             GridInfo.RowCount = ListInfoGrid.Count + 1;
@@ -247,9 +351,43 @@ namespace GS_STB
         }
 
         private void Times_Tick(object sender, EventArgs e)
-                {
+                
+        {
             CurrrentTimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
         }
-       
+
+        private void SaveDelay_Click(object sender, EventArgs e)
+        {
+            string line = "";
+            foreach (Control item in SettingDelay.Controls)           
+                if (item.Name.Contains("Delay"))
+                {
+                    var i = SettingDelay.Controls.IndexOf(item);
+                    foreach (Control item2 in SettingDelay.Controls)
+                        if (item2.TabIndex == i)
+                        { 
+                            line += item2.Text + ","; 
+                            continue; 
+                        }      
+                }
+
+            using (var fas = new FASEntities())
+            {
+                var F = (from lot in fas.FAS_GS_LOTs
+                         join m in fas.FAS_Models on lot.ModelID equals m.ModelID
+                         where lot.LOTID == BaseC.LOTID
+                         select m);
+
+                F.FirstOrDefault().DelaySetting = line;
+                fas.SaveChanges();
+            }
+
+            SaveDelays.Text = "Сохранено";
+        }
+
+        private void WorkForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
     }
 }
