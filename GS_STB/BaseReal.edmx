@@ -87,6 +87,17 @@
           <Property Name="ID" Type="tinyint" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="GroupName" Type="nvarchar" MaxLength="30" Nullable="false" />
         </EntityType>
+        <EntityType Name="FAS_Fixed_RG">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LotID" Type="int" Nullable="false" />
+          <Property Name="LitIndex" Type="smallint" Nullable="false" />
+          <Property Name="RGStart" Type="int" Nullable="false" />
+          <Property Name="RGEnd" Type="int" Nullable="false" />
+          <Property Name="LabDate" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="FAS_GS_LOTs">
           <Key>
             <PropertyRef Name="LOTID" />
@@ -119,7 +130,10 @@
           <Property Name="Fixed_Range" Type="bit" />
           <Property Name="Fixed_Range_Date" Type="date" />
           <Property Name="GetWeight" Type="bit" />
-          <Property Name="DelaySetting" Type="nvarchar" MaxLength="150" />
+          <Property Name="RangeStart" Type="int" />
+          <Property Name="RangeEnd" Type="int" />
+          <Property Name="FixedRG" Type="bit" />
+          <Property Name="StartDate" Type="datetime" />
         </EntityType>
         <EntityType Name="FAS_HDCP">
           <Key>
@@ -225,6 +239,7 @@
           <Property Name="UnitCounter" Type="smallint" Nullable="false" />
           <Property Name="LineID" Type="tinyint" Nullable="false" />
           <Property Name="LOTID" Type="smallint" Nullable="false" />
+          <Property Name="LitIndex" Type="smallint" />
         </EntityType>
         <EntityType Name="FAS_PackingGS">
           <Key>
@@ -253,6 +268,7 @@
           <Property Name="IsPacked" Type="bit" />
           <Property Name="InRepair" Type="bit" />
           <Property Name="PrintStationID" Type="smallint" />
+          <Property Name="FixedID" Type="int" />
         </EntityType>
         <EntityType Name="FAS_ShiftPlan">
           <Key>
@@ -618,6 +634,7 @@
           <EntitySet Name="FAS_Disassembly" EntityType="Self.FAS_Disassembly" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_ErrorCode" EntityType="Self.FAS_ErrorCode" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_ErrorCodeGroup" EntityType="Self.FAS_ErrorCodeGroup" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="FAS_Fixed_RG" EntityType="Self.FAS_Fixed_RG" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_GS_LOTs" EntityType="Self.FAS_GS_LOTs" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_HDCP" EntityType="Self.FAS_HDCP" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FAS_LabelScenario" EntityType="Self.FAS_LabelScenario" Schema="dbo" store:Type="Tables" />
@@ -850,7 +867,10 @@
           <NavigationProperty Name="FAS_Users" Relationship="Self.FK_FAS_GS_LOTs_FAS_Users" FromRole="FAS_GS_LOTs" ToRole="FAS_Users" />
           <NavigationProperty Name="FAS_Users1" Relationship="Self.FK_FAS_GS_LOTs_FAS_Users1" FromRole="FAS_GS_LOTs" ToRole="FAS_Users" />
           <NavigationProperty Name="FAS_WorkingScenario" Relationship="Self.FK_FAS_GS_LOTs_FAS_WorkingScenario" FromRole="FAS_GS_LOTs" ToRole="FAS_WorkingScenario" />
-          <Property Name="DelaySetting" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="RangeStart" Type="Int32" />
+          <Property Name="RangeEnd" Type="Int32" />
+          <Property Name="FixedRG" Type="Boolean" />
+          <Property Name="StartDate" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="FAS_HDCP">
           <Key>
@@ -962,6 +982,7 @@
           <Property Name="UnitCounter" Type="Int16" Nullable="false" />
           <Property Name="LineID" Type="Byte" Nullable="false" />
           <Property Name="LOTID" Type="Int16" Nullable="false" />
+          <Property Name="LitIndex" Type="Int16" />
         </EntityType>
         <EntityType Name="FAS_PackingGS">
           <Key>
@@ -998,6 +1019,7 @@
           <NavigationProperty Name="FAS_Start" Relationship="Self.FK_FAS_Start_FAS_SerialNumbers" FromRole="FAS_SerialNumbers" ToRole="FAS_Start" />
           <NavigationProperty Name="FAS_Upload" Relationship="Self.FK_FAS_Upload_FAS_SerialNumbers" FromRole="FAS_SerialNumbers" ToRole="FAS_Upload" />
           <NavigationProperty Name="FAS_WeightStation" Relationship="Self.FK_FAS_WeightStation_FAS_SerialNumbers" FromRole="FAS_SerialNumbers" ToRole="FAS_WeightStation" />
+          <Property Name="FixedID" Type="Int32" />
         </EntityType>
         <EntityType Name="FAS_ShiftPlan">
           <Key>
@@ -1484,8 +1506,20 @@
             <End Role="FAS_UserGroup" EntitySet="FAS_UserGroup" />
             <End Role="FAS_Users" EntitySet="FAS_Users" />
           </AssociationSet>
-        </EntityContainer>
-      </Schema>
+          <EntitySet Name="FAS_Fixed_RG" EntityType="FASModel.FAS_Fixed_RG" />
+          </EntityContainer>
+        <EntityType Name="FAS_Fixed_RG">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LotID" Type="Int32" Nullable="false" />
+          <Property Name="LitIndex" Type="Int16" Nullable="false" />
+          <Property Name="RGStart" Type="Int32" Nullable="false" />
+          <Property Name="RGEnd" Type="Int32" Nullable="false" />
+          <Property Name="LabDate" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
@@ -1584,7 +1618,10 @@
           <EntitySetMapping Name="FAS_GS_LOTs">
             <EntityTypeMapping TypeName="FASModel.FAS_GS_LOTs">
               <MappingFragment StoreEntitySet="FAS_GS_LOTs">
-                <ScalarProperty Name="DelaySetting" ColumnName="DelaySetting" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="FixedRG" ColumnName="FixedRG" />
+                <ScalarProperty Name="RangeEnd" ColumnName="RangeEnd" />
+                <ScalarProperty Name="RangeStart" ColumnName="RangeStart" />
                 <ScalarProperty Name="LOTID" ColumnName="LOTID" />
                 <ScalarProperty Name="LOTCode" ColumnName="LOTCode" />
                 <ScalarProperty Name="FULL_LOT_Code" ColumnName="FULL_LOT_Code" />
@@ -1722,6 +1759,7 @@
           <EntitySetMapping Name="FAS_PackingCounter">
             <EntityTypeMapping TypeName="FASModel.FAS_PackingCounter">
               <MappingFragment StoreEntitySet="FAS_PackingCounter">
+                <ScalarProperty Name="LitIndex" ColumnName="LitIndex" />
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="PalletCounter" ColumnName="PalletCounter" />
                 <ScalarProperty Name="BoxCounter" ColumnName="BoxCounter" />
@@ -1749,6 +1787,7 @@
           <EntitySetMapping Name="FAS_SerialNumbers">
             <EntityTypeMapping TypeName="FASModel.FAS_SerialNumbers">
               <MappingFragment StoreEntitySet="FAS_SerialNumbers">
+                <ScalarProperty Name="FixedID" ColumnName="FixedID" />
                 <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
                 <ScalarProperty Name="LOTID" ColumnName="LOTID" />
                 <ScalarProperty Name="IsUsed" ColumnName="IsUsed" />
@@ -1884,6 +1923,18 @@
                 <ScalarProperty Name="ID" ColumnName="ID" />
                 <ScalarProperty Name="Scenario" ColumnName="Scenario" />
                 <ScalarProperty Name="Description" ColumnName="Description" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="FAS_Fixed_RG">
+            <EntityTypeMapping TypeName="FASModel.FAS_Fixed_RG">
+              <MappingFragment StoreEntitySet="FAS_Fixed_RG">
+                <ScalarProperty Name="LabDate" ColumnName="LabDate" />
+                <ScalarProperty Name="RGEnd" ColumnName="RGEnd" />
+                <ScalarProperty Name="RGStart" ColumnName="RGStart" />
+                <ScalarProperty Name="LitIndex" ColumnName="LitIndex" />
+                <ScalarProperty Name="LotID" ColumnName="LotID" />
+                <ScalarProperty Name="id" ColumnName="id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

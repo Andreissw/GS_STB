@@ -23,6 +23,7 @@ namespace GS_STB
         public Nullable<bool> IsPacked { get; set; }
         public Nullable<bool> InRepair { get; set; }
         public Nullable<short> PrintStationID { get; set; }
+        public Nullable<int> FixedID { get; set; }
     
         public virtual FAS_CERT FAS_CERT { get; set; }
         public virtual FAS_HDCP FAS_HDCP { get; set; }

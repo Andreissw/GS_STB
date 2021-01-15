@@ -49,7 +49,7 @@ namespace GS_STB.Forms_Modules
 
         private void msg_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Y)
+            if (e.KeyCode == Keys.Space)
             {
                 this.DialogResult = DialogResult.OK;
                 this.Close();             

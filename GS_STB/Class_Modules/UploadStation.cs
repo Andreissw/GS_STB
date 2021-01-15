@@ -174,7 +174,6 @@ namespace GS_STB.Class_Modules
             TextBox TB = control.Controls.Find("SerialTextBox", true).OfType<TextBox>().FirstOrDefault();
             cts = new CancellationTokenSource();
             token = cts.Token;
-
             Parallel();
         }
 
@@ -277,21 +276,39 @@ namespace GS_STB.Class_Modules
                     var list = CheckSNPack(CASIDShortSerial);
                     //Если нет, то задвоение
                     if (list.Count == 0)
-                    { LabelStatus(Controllabel, $@"{_SN } Задвоение CASID, заблокировать данный приемник", Color.Red); return "true"; }
+                        { LabelStatus(Controllabel, $"{_SN } Задвоение CASID, заблокировать данный приемник \n Приемник был прошит ранее с таким номером {CASIDShortSerial}", Color.Red); return "true"; }
+
                     //Если был упакован, то выводим информацию
                     LabelStatus(Controllabel, $"{list[0]} Серийный номер с таким CASID {CASID} \n был упакован. Liter {list[1]}, Pallet {list[2]}, BoxNum {list[3]} \n UnitNum {list[4]} Дата {list[5]}, Упаковал {list[6]} ", Color.Red); return "true";
                 }
 
-                //Сюда проверка флажков 
-                if (CheckBoolSerialNumber())
+                //Проверка флажков 
+                var Result = CheckBoolSerialNumber();
+                if (Result == "false")
                 { LabelStatus(Controllabel, $"{_SN} - Номер не прошел проверку SerialNumbers, отложите приемник \n сообщите об ошибке технологу", Color.Red); return "true"; }
+
+                if (Result == "UpOk") //Если приемник уже прошит с таким номером FullSTBSN, проверка
+                    if (CASIDShortSerial == 0)                    
+                        using (var fas = new FASEntities())
+                        {
+                            var SmID = fas.FAS_Upload.Where(c => c.SerialNumber == ShortSN).Select(c => c.SmartCardID).FirstOrDefault();                       
+                            LabelStatus(Controllabel, $"{_SN} - Серийный номер уже присвоен другому приемнику  \n Его SmartID - {SmID} ", Color.Red); return "true";
+                        }
+                    
+
 
                 if (CASIDShortSerial == ShortSN)   //ShortSN с базы равен с введенным ShortSN 
                 {
                     if (CheckBoxDublicateSCID)
                     {
                         if (!UpPrintID & !UpPrintSN) //Проверка настройка печати
-                        { LabelStatus(Controllabel, $@"{_SN } Задвоение CASID, заблокировать данный приемник", Color.Red); return "true"; }
+                        {
+                            using (var fas = new FASEntities())
+                            {
+                                var SmID = fas.FAS_Upload.Where(c => c.SerialNumber == CASIDShortSerial).Select(c => c.SmartCardID).FirstOrDefault();                           
+                                LabelStatus(Controllabel, $"{_SN } Задвоение CASID, заблокировать данный приемник \n Приемник с SN - {CASIDShortSerial} и SmartID - {SmID} уже был прошит ранее", Color.Red); return "true";
+                            }
+                        }
 
                         var mes = new msg("Номер был прошит ранее \n желаете ли перепечатать этикетку ?");
                         mes.ShowDialog(); //разрешение на печать
@@ -678,9 +695,7 @@ namespace GS_STB.Class_Modules
         }
         string GetDUID()
         {
-            return GetDatafromSTB("A7","270008","GetDUID",0, "Delay1");
-            //var CASID = ArListGSLot[7].ToString() + DUID;
-            //return CASID;
+            return GetDatafromSTB("A7","270008","GetDUID",0, "Delay1");         
         }
 
         string GetSmartID(Label lb)
@@ -736,28 +751,6 @@ namespace GS_STB.Class_Modules
             Result = ptid + Result;
             var sums = Int64.Parse(Result).ToString().Sum(c => c - '0');
             return sums + Result;
-
-            //var Result = (Convert.ToInt32(DUID, 16) / (1000000000 / 10M)).ToString();
-            //var Sub_Result = Result.Substring(Result.IndexOf(',') + 1, Result.Length - (Result.IndexOf(',') + 1));
-
-            //if (Sub_Result.Length != 8)
-            //{
-            //    string nul = "";
-            //    for (int i = 0; i < 8 - Sub_Result.Length; i++)               
-            //        nul = nul + "0";                
-
-            //    Sub_Result = Sub_Result + nul;
-            //}
-
-            //Result = "0" + Sub_Result;
-
-            //var ptid = (Convert.ToInt32(ArListGSLot[7].ToString(), 16)).ToString();
-            //if (ptid.Length == 2)
-            //    ptid = "0" + ptid;
-
-            //Result = ptid + Result;
-            //var sums = Int64.Parse(Result).ToString().Sum(c => c - '0');
-            //return sums + Result;
         }
 
         ArrayList LoadSnData(int snShort)
@@ -820,7 +813,6 @@ namespace GS_STB.Class_Modules
             }
             return "";
         }
-
         string SetSN(string SN)
         {
             var G = control.Controls.Find("TestGrid", true).OfType<DataGridView>().FirstOrDefault();
@@ -832,40 +824,7 @@ namespace GS_STB.Class_Modules
             var SNData = "8A" + StrToHex(SN);
             SendToCOM(DataGenerationOneByte(SNData, "0DF201180091"), timeout);
             control.Invoke((Action)(() => { G[0, 1].Value = "SetSN"; G[1, 1].Value = timeout; }));
-            return "true";
-
-            #region
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    delay += Delay;                
-            //    timeout = 800 + delay;
-            //    SendToCOM(DataGenerationOneByte(SNData, "0DF201180091"), timeout);
-            //    var WriteSN = BitConverter.ToString(arrBuffer, 0, intSize).Replace("-", "");
-            //    if (WriteSN.Contains("0A00"))
-            //        return "true";
-
-            //}
-            //return "";
-
-            //SendToCOM(DataGenerationOneByte(SNData, "0DF201180091"), timeout);
-
-            //return "true";
-
-            //var WriteSN = BitConverter.ToString(arrBuffer, 0, intSize).Replace("-", "");
-            //if (WriteSN.Contains("0A00"))
-            //    return "true";
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    delay += 200;
-            //    var SNData = "8A" + StrToHex(SN);
-            //    timeout = 800 + delay;
-            //    SendToCOM(DataGenerationOneByte(SNData, "0DF201180091"), timeout);
-            //    return "true";
-            //    //var WriteSN = BitConverter.ToString(arrBuffer, 0, intSize).Replace("-", "");
-            //    //if (WriteSN.Contains("0A00"))
-            //    //    return "true";
-            //}
-            #endregion
+            return "true";         
         }
 
         string GetSN()
@@ -979,7 +938,6 @@ namespace GS_STB.Class_Modules
 
             return "true";
         }
-
         string StrToHex(string MAC)
         {
             string sHex = "";
@@ -1014,7 +972,7 @@ namespace GS_STB.Class_Modules
             }
         }
 
-        bool CheckBoolSerialNumber()
+        string CheckBoolSerialNumber()
         {
             var Bools = ArListSNnumer;
             Bools.RemoveAt(0);
@@ -1023,60 +981,16 @@ namespace GS_STB.Class_Modules
 
             //Used 1, Active 1,Uploaded 1, Packed 0, Repair 0 = Проверка прошла
             if (B[0] & B[1] & B[2] & !B[4] & !B[5])            
-                return false;
+                return "UpOk";
 
             if (B[0] & B[1] & !B[2] & !B[4] & !B[5])
-                return false;
+                return "UpNok";
 
-            return true;//Если условие выше не пройдены, Проверка не пройдена
+            return "false";//Если условие выше не пройдены, Проверка не пройдена
 
            
             
-        }
-        //ArrayList CheckSCID(string CASID) //Старая проверка, которую я убрал из логики
-        //{
-        //    using (var FAS = new FASEntities())
-        //    {
-        //        var ArrayList = new ArrayList();                
-        //        var list = (from up in FAS.FAS_Upload
-        //                    join SN in FAS.FAS_SerialNumbers on up.SerialNumber equals SN.SerialNumber
-        //                    join line in FAS.FAS_Lines on up.LineID equals line.LineID
-        //                    join St in FAS.FAS_Start on up.SerialNumber equals St.SerialNumber
-        //                    from pac in FAS.FAS_PackingGS.Where(c => c.SerialNumber == up.SerialNumber).DefaultIfEmpty()
-        //                    join us1 in FAS.FAS_Users on up.UploadByID equals us1.UserID
-        //                    //join us2 in FAS.FAS_Users on pac.PackingByID equals us2.UserID
-        //                    from us2 in FAS.FAS_Users.Where(c => c.UserID == pac.PackingByID).DefaultIfEmpty()
-        //                        //from lit in FAS.FAS_Liter on pac.LiterID equals lit.ID
-        //                    from lit in FAS.FAS_Liter.Where(c=>c.ID == pac.LiterID).DefaultIfEmpty()
-        //                    where up.CASID == CASID
-        //                    select new
-        //                    {
-        //                        St.FullSTBSN,
-        //                        up.SmartCardID,
-        //                        line.LineName,
-        //                        up.UploadDate,
-        //                        us1.UserName,
-        //                        SN.IsPacked,
-        //                        LiterName = !lit.LiterName.Equals(null),
-        //                        LiterIndex = !pac.LiterIndex.Equals(null),
-        //                        PalletNum = !pac.PalletNum.Equals(null),
-        //                        BoxNum = !pac.BoxNum.Equals(null),
-        //                        UnitNum = !pac.UnitNum.Equals(null),
-        //                        PackingDate = !pac.Equals(null),
-        //                        pacus = !us2.UserName.Equals(null),
-        //                        up.CASID
-        //                    }) ;               
-
-        //        if (list.Count() == 0)
-        //            return ArrayList;
-          
-        //        var report = list.First().GetType().GetProperties().Select(c => c.GetValue(list.First()));
-        //        foreach (var value in report)
-        //            ArrayList.Add(value);
-        //        return ArrayList;
-        //    }
-        //}               
-
+        }    
         string GetDatafromSTB(string ByteRequest,string ByteAnswer,string method,int row,string DelayName)
         {
             var G = control.Controls.Find("TestGrid", true).OfType<DataGridView>().FirstOrDefault();//================================
@@ -1110,7 +1024,6 @@ namespace GS_STB.Class_Modules
             }
             return ResText;
         }
-
         string SendToCOM(string GeneratedRequest,int T) //0DF20101000CAEB049
         {
             var ArrayByte = StringToByteArray(GeneratedRequest); //count 8 12-242-1-1-0-12-171-219
@@ -1134,8 +1047,7 @@ namespace GS_STB.Class_Modules
                 MessageBox.Show($@"Проблемы с ComPort {SerialPort.PortName},Проверьте подключение" + "Системная ошибка -" + e.ToString());
                 return "COM";
             }
-        }
-      
+        }      
         List<byte> StringToByteArray(string raw)
         {
             var d = new List<byte>();
@@ -1159,9 +1071,7 @@ namespace GS_STB.Class_Modules
             ByteRequestCS =  ByteRequestCS[L - 1].ToString() + ByteRequestCS[L].ToString() + ByteRequestCS[L - 3].ToString() + ByteRequestCS[L - 2].ToString();
             //ByteRequestCS =  ByteRequestCS[L - 1].ToString();
             return Header + ByteRequest + ByteRequestCS; //0DF20101000CACDE72 
-        }
-
-       
+        }       
         string DataGenerationOneOther(string data, string dataLength)
         {
             string Header = "0DF201" + dataLength;
@@ -1185,32 +1095,38 @@ namespace GS_STB.Class_Modules
             var L = ByteRequestCS.Length - 1;
             ByteRequestCS = ByteRequestCS[L - 1].ToString() + ByteRequestCS[L].ToString() + ByteRequestCS[L - 3].ToString() + ByteRequestCS[L - 2].ToString();
             return Header + HeaderCS + data + ByteRequestCS;     
-        }
-        
-       
+        }  
         void GetLot(DataGridView Grid)
         {
-            using (FASEntities FAS = new FASEntities())
-            {
-                var list = from Lot in FAS.FAS_GS_LOTs
-                           join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID                           
-                           where Lot.IsActive == true orderby Lot.LOTID descending                
-                           select new
-                           {
-                               Lot = Lot.LOTCode,
-                               Full_Lot = Lot.FULL_LOT_Code,
-                               Model = model.ModelName,
-                               InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUploaded == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Used = (from s in FAS.FAS_SerialNumbers where s.IsUploaded == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Lot.LOTID                          
-                           };
-                Grid.DataSource = list.ToList();
-            }
-        }
+            loadgrid.Loadgrid(Grid, @"use FAS select 
+LOTCode,FULL_LOT_Code,ModelName,
+(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID) InLot,
+(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 0 and s.IsActive = 1) Ready,
+(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 1 ) Used,
+LOTID
+from FAS_GS_LOTs as gs
+left join FAS_Models as m on gs.ModelID = m.ModelID
 
-       
-
+where IsActive = 1
+order by LOTID desc ");
+            //using (FASEntities FAS = new FASEntities())
+            //{
+            //    var list = from Lot in FAS.FAS_GS_LOTs
+            //               join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID                           
+            //               where Lot.IsActive == true orderby Lot.LOTID descending                
+            //               select new
+            //               {
+            //                   Lot = Lot.LOTCode,
+            //                   Full_Lot = Lot.FULL_LOT_Code,
+            //                   Model = model.ModelName,
+            //                   InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
+            //                   Ready = (from s in FAS.FAS_SerialNumbers where s.IsUploaded == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+            //                   Used = (from s in FAS.FAS_SerialNumbers where s.IsUploaded == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+            //                   Lot.LOTID                          
+            //               };
+            //    Grid.DataSource = list.ToList();
+            //}
+        }     
         void SetBoolSerialNumbers(int serialnumber)
         {
             using (var FAS = new FASEntities())
@@ -1250,7 +1166,6 @@ namespace GS_STB.Class_Modules
                 return ArrayListHDCP;
             }
         }
-
         string GetDelaySettings()
         {
             using (var fas = new FASEntities())

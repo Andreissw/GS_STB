@@ -42,7 +42,10 @@ namespace GS_STB
         public Nullable<bool> Fixed_Range { get; set; }
         public Nullable<System.DateTime> Fixed_Range_Date { get; set; }
         public Nullable<bool> GetWeight { get; set; }
-        public string DelaySetting { get; set; }
+        public Nullable<int> RangeStart { get; set; }
+        public Nullable<int> RangeEnd { get; set; }
+        public Nullable<bool> FixedRG { get; set; }
+        public Nullable<System.DateTime> StartDate { get; set; }
     
         public virtual FAS_LabelScenario FAS_LabelScenario { get; set; }
         public virtual FAS_Models FAS_Models { get; set; }

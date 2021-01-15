@@ -317,7 +317,7 @@ namespace GS_STB
         void SetInfoGrid()
         {
             if (BaseC.GetType() == typeof(FAS_END))
-            { ListInfoGrid.AddRange(new List<string>() {"Литера","Кол-во в групповой","Кол-во в паллете" }); }
+            { ListInfoGrid.AddRange(new List<string>() {"Литера - ЛитерИндекс","Кол-во в групповой","Кол-во в паллете" }); }
 
             if (BaseC.GetType() == typeof(FAS_Weight_control))
             {

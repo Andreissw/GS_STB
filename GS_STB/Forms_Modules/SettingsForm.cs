@@ -41,11 +41,13 @@ namespace GS_STB.Forms_Modules
             if (GetStationID())   //Если Имя компьютера отсутствует в базе, то добавляем в базу      
                 BaseC.StationID = RegisterStation(); //Регистрация компютера и просвение ID    
             RB_Local_DateTime.CheckedChanged += (a, e) => { if (RB_Local_DateTime.Checked) { DateTimePicker.Enabled = true; return; } DateTimePicker.Enabled = false;      };
+
             BT_SaveLine.Click += (a, e) =>  //Событие Кнопка настройки линии (Добавление/Исправление)
             {
                 if (string.IsNullOrEmpty(CB_Line.Text))    //Проверяем была ли выбрана линия           
                     return;
 
+                BaseC.LineID = LineID;
                 if (CheckApp()) //Проверяем настроена ли была линия ранее, если да то update, если нет то добалвяет 
                     AddLine();  
                 else
@@ -98,11 +100,17 @@ namespace GS_STB.Forms_Modules
                 if (BaseC.GetType() == typeof(FAS_Weight_control))
                     { OpenForm(BaseC); return; }
                
-                if (DG_LOTList.CurrentRow.Index == -1|| DG_LOTList.Rows.Count == 0) { MessageBox.Show("Лот не выбран!"); return; }  OpenForm(BaseC); 
+                if (DG_LOTList.CurrentRow.Index == -1|| DG_LOTList.Rows.Count == 0) 
+                { MessageBox.Show("Лот не выбран!"); return; }
+
+                OpenForm(BaseC); 
             };
 
             BT_OpenSettings.Click += (a, e) => //Кнопка открытие настройки линии
-            { OffComponents(LineSettings); BTBack.Visible = true; label2.Visible = false; GetSettingLine(); };
+
+            { 
+                OffComponents(LineSettings); BTBack.Visible = true; label2.Visible = false; GetSettingLine(); 
+            };
             
         }
 
@@ -156,6 +164,7 @@ namespace GS_STB.Forms_Modules
         {
             //Передаем свойства всех элементов формы (Control)  в базовый класс
             BaseC.control = this;
+            var I = DG_LOTList.CurrentRow.Index;
 
             if (BaseC.GetType() == typeof(FAS_Weight_control))
             {
@@ -170,21 +179,37 @@ namespace GS_STB.Forms_Modules
                 BaseC.ArrayList.RemoveRange(3, BaseC.ArrayList.Count - 3);
 
             //Добавление LOTID из грида по выделенной строке 
-            int LOTID = int.Parse(DG_LOTList[6, DG_LOTList.CurrentRow.Index].Value.ToString());
+            int LOTID = int.Parse(DG_LOTList[6, I].Value.ToString());
 
             //Добавление LOTCode из грида по выделенной строке 
-            BaseC.LotCode = int.Parse(DG_LOTList[0, DG_LOTList.CurrentRow.Index].Value.ToString());
+            BaseC.LotCode = int.Parse(DG_LOTList[0, I].Value.ToString());
 
             //Условие, если базовый класс приведен к типу FASStart
             if (BaseC.GetType() == typeof(FASStart))
             {
+                BaseC.DateFas_Start = false;
                 BaseC.labelCount = int.Parse(TB_LabelSNCount.Text); //Указываем сколько этикеток печатать
                 BaseC.UpPrintSN = CheckBoxSN.Checked; //Указываем надо ли печатать этикетку
                                                       //Условие выбора сетевого времени или локального указанного вручную
-                if (RB_Server_Time.Checked)
-                    BaseC.DateFas_Start = true; //Сетевое
-                else
-                { BaseC.DateFas_Start = false; BaseC.DateFas_ST_Text = DateTimePicker.Value.ToString("dd.MM.yyyy"); } //Локальное
+
+                if (DG_LOTList[10, I].Value != null)
+                    if (DG_LOTList[10, I].Value.ToString() == "True")
+                    {
+                        FixedRange FR = new FixedRange(LOTID, BC);
+                        var Result = FR.ShowDialog();
+                        if (Result == DialogResult.Cancel)//Если нажали отмена, выходим из метода
+                            return;
+                        else if (Result == DialogResult.Retry)//Если нажали None(Работа без диапозона)
+                            BaseC.DateFas_Start = false; 
+                        else
+                            BaseC.DateFas_Start = true; //Выбрали диапозон
+                    }
+                #region
+                //if (RB_Server_Time.Checked)
+                //    BaseC.DateFas_Start = true; //Сетевое
+                //else
+                //{ BaseC.DateFas_Start = false; BaseC.DateFas_ST_Text = DateTimePicker.Value.ToString("dd.MM.yyyy"); } //Локальное
+                #endregion
 
             }
 
@@ -206,13 +231,25 @@ namespace GS_STB.Forms_Modules
 
             //Условие, если базовый класс приведен к типу FAS_END
             if (BaseC.GetType() == typeof(FAS_END))
-            {   //Опредление данных с Лота по упаковке
+            {  
+                if (DG_LOTList[12, I].Value != null) //Выбираем диапозон у лота
+                    if (DG_LOTList[12, I].Value.ToString() == "True")
+                    {
+                        FixedRange FR = new FixedRange(LOTID, BC);
+                        var Result = FR.ShowDialog();
+                        if (Result == DialogResult.Cancel)//Если нажали отмена, выходим из метода
+                            return;
+                        else if (Result == DialogResult.Retry)//Если нажали None(Работа без диапозона)
+                            BaseC.DateFas_Start = false;
+                        else
+                            BaseC.DateFas_Start = true; //Выбрали диапозон
 
-                //BaseC.literindex = int.Parse(DG_LOTList[3, DG_LOTList.CurrentRow.Index].Value.ToString());
-                //BaseC.BoxCapacity = int.Parse(DG_LOTList[4, DG_LOTList.CurrentRow.Index].Value.ToString());
-                //BaseC.PalletCapacity = int.Parse(DG_LOTList[5, DG_LOTList.CurrentRow.Index].Value.ToString());
-                //Данные PalletCapacity, LiteraIndex, BoxCapacity
-                for (int i = 3; i < 6; i++)
+
+                        //BaseC.DateFas_Start = true;
+                    }
+
+                BaseC.ArrayList.Add("");
+                for (int i = 4; i < 6; i++)
                     BaseC.ArrayList.Add(DG_LOTList[i, DG_LOTList.CurrentRow.Index].Value.ToString());
             }
 
@@ -341,5 +378,7 @@ namespace GS_STB.Forms_Modules
             if (!CheckBoxSN.Checked)
                 TB_LabelSNCount.Text = "0";
         }
+
+        
     }
 }

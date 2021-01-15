@@ -29,13 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.GB_UserData = new System.Windows.Forms.GroupBox();
             this.BT_LogOut = new System.Windows.Forms.Button();
             this.Label13 = new System.Windows.Forms.Label();
             this.TB_RFIDIn = new System.Windows.Forms.TextBox();
             this.GB_Work = new System.Windows.Forms.GroupBox();
+            this.FASENDLB = new System.Windows.Forms.Label();
+            this.Fas_StartRange = new System.Windows.Forms.Label();
             this.SettingDelay = new System.Windows.Forms.GroupBox();
             this.SaveDelays = new System.Windows.Forms.Label();
             this.SaveDelay = new System.Windows.Forms.Button();
@@ -210,6 +212,8 @@
             // 
             // GB_Work
             // 
+            this.GB_Work.Controls.Add(this.FASENDLB);
+            this.GB_Work.Controls.Add(this.Fas_StartRange);
             this.GB_Work.Controls.Add(this.SettingDelay);
             this.GB_Work.Controls.Add(this.groupBox6);
             this.GB_Work.Controls.Add(this.Desassembly_STBGroup);
@@ -230,6 +234,28 @@
             this.GB_Work.TabIndex = 31;
             this.GB_Work.TabStop = false;
             this.GB_Work.Visible = false;
+            // 
+            // FASENDLB
+            // 
+            this.FASENDLB.AutoSize = true;
+            this.FASENDLB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.FASENDLB.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.FASENDLB.Location = new System.Drawing.Point(4, 292);
+            this.FASENDLB.Name = "FASENDLB";
+            this.FASENDLB.Size = new System.Drawing.Size(187, 16);
+            this.FASENDLB.TabIndex = 1002;
+            this.FASENDLB.Text = "CONTROLLABELFASEND";
+            this.FASENDLB.Visible = false;
+            // 
+            // Fas_StartRange
+            // 
+            this.Fas_StartRange.AutoSize = true;
+            this.Fas_StartRange.Location = new System.Drawing.Point(995, 383);
+            this.Fas_StartRange.Name = "Fas_StartRange";
+            this.Fas_StartRange.Size = new System.Drawing.Size(41, 13);
+            this.Fas_StartRange.TabIndex = 1001;
+            this.Fas_StartRange.Text = "label17";
+            this.Fas_StartRange.Visible = false;
             // 
             // SettingDelay
             // 
@@ -258,7 +284,7 @@
             this.SettingDelay.Controls.Add(this.label11);
             this.SettingDelay.Controls.Add(this.label9);
             this.SettingDelay.Controls.Add(this.label10);
-            this.SettingDelay.Location = new System.Drawing.Point(804, 3);
+            this.SettingDelay.Location = new System.Drawing.Point(855, 19);
             this.SettingDelay.Name = "SettingDelay";
             this.SettingDelay.Size = new System.Drawing.Size(522, 332);
             this.SettingDelay.TabIndex = 1000;
@@ -281,6 +307,7 @@
             this.SaveDelay.Name = "SaveDelay";
             this.SaveDelay.Size = new System.Drawing.Size(128, 23);
             this.SaveDelay.TabIndex = 1000;
+            this.SaveDelay.TabStop = false;
             this.SaveDelay.Text = "Сохранить настройки ";
             this.SaveDelay.UseVisualStyleBackColor = true;
             this.SaveDelay.Click += new System.EventHandler(this.SaveDelay_Click);
@@ -307,6 +334,7 @@
             this.Delay11.Name = "Delay11";
             this.Delay11.Size = new System.Drawing.Size(100, 20);
             this.Delay11.TabIndex = 11;
+            this.Delay11.TabStop = false;
             // 
             // Delay10
             // 
@@ -330,6 +358,7 @@
             this.Delay10.Name = "Delay10";
             this.Delay10.Size = new System.Drawing.Size(100, 20);
             this.Delay10.TabIndex = 10;
+            this.Delay10.TabStop = false;
             // 
             // Delay9
             // 
@@ -353,6 +382,7 @@
             this.Delay9.Name = "Delay9";
             this.Delay9.Size = new System.Drawing.Size(100, 20);
             this.Delay9.TabIndex = 9;
+            this.Delay9.TabStop = false;
             // 
             // Delay8
             // 
@@ -376,6 +406,7 @@
             this.Delay8.Name = "Delay8";
             this.Delay8.Size = new System.Drawing.Size(100, 20);
             this.Delay8.TabIndex = 8;
+            this.Delay8.TabStop = false;
             // 
             // Delay7
             // 
@@ -399,6 +430,7 @@
             this.Delay7.Name = "Delay7";
             this.Delay7.Size = new System.Drawing.Size(100, 20);
             this.Delay7.TabIndex = 7;
+            this.Delay7.TabStop = false;
             // 
             // Delay6
             // 
@@ -422,6 +454,7 @@
             this.Delay6.Name = "Delay6";
             this.Delay6.Size = new System.Drawing.Size(100, 20);
             this.Delay6.TabIndex = 6;
+            this.Delay6.TabStop = false;
             // 
             // Delay5
             // 
@@ -445,6 +478,7 @@
             this.Delay5.Name = "Delay5";
             this.Delay5.Size = new System.Drawing.Size(100, 20);
             this.Delay5.TabIndex = 5;
+            this.Delay5.TabStop = false;
             // 
             // Delay4
             // 
@@ -468,6 +502,7 @@
             this.Delay4.Name = "Delay4";
             this.Delay4.Size = new System.Drawing.Size(100, 20);
             this.Delay4.TabIndex = 4;
+            this.Delay4.TabStop = false;
             // 
             // Delay3
             // 
@@ -491,6 +526,7 @@
             this.Delay3.Name = "Delay3";
             this.Delay3.Size = new System.Drawing.Size(100, 20);
             this.Delay3.TabIndex = 3;
+            this.Delay3.TabStop = false;
             // 
             // Delay2
             // 
@@ -514,6 +550,7 @@
             this.Delay2.Name = "Delay2";
             this.Delay2.Size = new System.Drawing.Size(100, 20);
             this.Delay2.TabIndex = 2;
+            this.Delay2.TabStop = false;
             // 
             // Delay1
             // 
@@ -537,6 +574,7 @@
             this.Delay1.Name = "Delay1";
             this.Delay1.Size = new System.Drawing.Size(100, 20);
             this.Delay1.TabIndex = 1;
+            this.Delay1.TabStop = false;
             // 
             // TestGrid
             // 
@@ -550,6 +588,7 @@
             this.TestGrid.RowHeadersVisible = false;
             this.TestGrid.Size = new System.Drawing.Size(305, 276);
             this.TestGrid.TabIndex = 1000;
+            this.TestGrid.TabStop = false;
             // 
             // Column3
             // 
@@ -788,6 +827,7 @@
             this.ClearBT.Name = "ClearBT";
             this.ClearBT.Size = new System.Drawing.Size(75, 71);
             this.ClearBT.TabIndex = 135;
+            this.ClearBT.TabStop = false;
             this.ClearBT.UseVisualStyleBackColor = true;
             // 
             // ProgressbarText
@@ -823,9 +863,9 @@
             this.FAS_Print.Controls.Add(this.CHPrintSN);
             this.FAS_Print.Controls.Add(this.BT_PrinterSettings);
             this.FAS_Print.Controls.Add(this.GB_PrinterSettings);
-            this.FAS_Print.Location = new System.Drawing.Point(192, 22);
+            this.FAS_Print.Location = new System.Drawing.Point(1247, 431);
             this.FAS_Print.Name = "FAS_Print";
-            this.FAS_Print.Size = new System.Drawing.Size(606, 203);
+            this.FAS_Print.Size = new System.Drawing.Size(64, 21);
             this.FAS_Print.TabIndex = 131;
             this.FAS_Print.TabStop = false;
             this.FAS_Print.Text = "Печать";
@@ -1106,11 +1146,11 @@
             // Controllabel
             // 
             this.Controllabel.AutoSize = true;
-            this.Controllabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Controllabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.Controllabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Controllabel.Location = new System.Drawing.Point(7, 237);
+            this.Controllabel.Location = new System.Drawing.Point(4, 222);
             this.Controllabel.Name = "Controllabel";
-            this.Controllabel.Size = new System.Drawing.Size(148, 20);
+            this.Controllabel.Size = new System.Drawing.Size(139, 18);
             this.Controllabel.TabIndex = 29;
             this.Controllabel.Text = "CONTROLLABEL";
             // 
@@ -1123,6 +1163,7 @@
             this.Label2.Size = new System.Drawing.Size(161, 25);
             this.Label2.TabIndex = 28;
             this.Label2.Text = "Serial Number";
+            this.Label2.Visible = false;
             // 
             // SerialTextBox
             // 
@@ -1136,17 +1177,18 @@
             // 
             this.DG_UpLog.AllowUserToAddRows = false;
             this.DG_UpLog.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DG_UpLog.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
-            this.DG_UpLog.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllHeaders;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DG_UpLog.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.DG_UpLog.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.DG_UpLog.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DG_UpLog.Location = new System.Drawing.Point(0, 383);
             this.DG_UpLog.Name = "DG_UpLog";
             this.DG_UpLog.ReadOnly = true;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DG_UpLog.RowsDefaultCellStyle = dataGridViewCellStyle4;
-            this.DG_UpLog.Size = new System.Drawing.Size(1199, 229);
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DG_UpLog.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            this.DG_UpLog.Size = new System.Drawing.Size(989, 229);
             this.DG_UpLog.TabIndex = 26;
+            this.DG_UpLog.TabStop = false;
             // 
             // GroupBox4
             // 
@@ -1170,6 +1212,7 @@
             this.GETSNCH.Name = "GETSNCH";
             this.GETSNCH.Size = new System.Drawing.Size(162, 18);
             this.GETSNCH.TabIndex = 138;
+            this.GETSNCH.TabStop = false;
             this.GETSNCH.Text = "Проверка прошивки GetSN";
             this.GETSNCH.UseVisualStyleBackColor = true;
             this.GETSNCH.Visible = false;
@@ -1183,6 +1226,7 @@
             this.BackButton.Name = "BackButton";
             this.BackButton.Size = new System.Drawing.Size(56, 58);
             this.BackButton.TabIndex = 137;
+            this.BackButton.TabStop = false;
             this.BackButton.UseVisualStyleBackColor = true;
             // 
             // CloseApp
@@ -1194,6 +1238,7 @@
             this.CloseApp.Name = "CloseApp";
             this.CloseApp.Size = new System.Drawing.Size(56, 58);
             this.CloseApp.TabIndex = 136;
+            this.CloseApp.TabStop = false;
             this.CloseApp.UseVisualStyleBackColor = true;
             // 
             // GridInfo
@@ -1213,6 +1258,7 @@
             this.GridInfo.RowHeadersVisible = false;
             this.GridInfo.Size = new System.Drawing.Size(446, 254);
             this.GridInfo.TabIndex = 26;
+            this.GridInfo.TabStop = false;
             // 
             // Column1
             // 
@@ -1231,9 +1277,9 @@
             this.FAS_EndGB.Controls.Add(this.GroupBox7);
             this.FAS_EndGB.Controls.Add(this.GroupBox2);
             this.FAS_EndGB.Controls.Add(this.groupBox3);
-            this.FAS_EndGB.Location = new System.Drawing.Point(1255, 638);
+            this.FAS_EndGB.Location = new System.Drawing.Point(179, 11);
             this.FAS_EndGB.Name = "FAS_EndGB";
-            this.FAS_EndGB.Size = new System.Drawing.Size(65, 35);
+            this.FAS_EndGB.Size = new System.Drawing.Size(536, 209);
             this.FAS_EndGB.TabIndex = 133;
             this.FAS_EndGB.TabStop = false;
             this.FAS_EndGB.Text = "FAS END";
@@ -1243,10 +1289,10 @@
             // 
             this.GroupBox7.BackColor = System.Drawing.Color.Green;
             this.GroupBox7.Controls.Add(this.NextBoxNum);
-            this.GroupBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.GroupBox7.Location = new System.Drawing.Point(274, 120);
+            this.GroupBox7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.GroupBox7.Location = new System.Drawing.Point(6, 125);
             this.GroupBox7.Name = "GroupBox7";
-            this.GroupBox7.Size = new System.Drawing.Size(256, 97);
+            this.GroupBox7.Size = new System.Drawing.Size(185, 76);
             this.GroupBox7.TabIndex = 8;
             this.GroupBox7.TabStop = false;
             this.GroupBox7.Text = "Следующая коробка";
@@ -1254,10 +1300,10 @@
             // NextBoxNum
             // 
             this.NextBoxNum.AutoSize = true;
-            this.NextBoxNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.NextBoxNum.Location = new System.Drawing.Point(3, 25);
+            this.NextBoxNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.NextBoxNum.Location = new System.Drawing.Point(3, 18);
             this.NextBoxNum.Name = "NextBoxNum";
-            this.NextBoxNum.Size = new System.Drawing.Size(68, 73);
+            this.NextBoxNum.Size = new System.Drawing.Size(51, 55);
             this.NextBoxNum.TabIndex = 0;
             this.NextBoxNum.Text = "0";
             // 
@@ -1266,20 +1312,20 @@
             this.GroupBox2.BackColor = System.Drawing.Color.Green;
             this.GroupBox2.Controls.Add(this.PalletNum);
             this.GroupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.GroupBox2.Location = new System.Drawing.Point(274, 31);
+            this.GroupBox2.Location = new System.Drawing.Point(268, 19);
             this.GroupBox2.Name = "GroupBox2";
-            this.GroupBox2.Size = new System.Drawing.Size(254, 82);
+            this.GroupBox2.Size = new System.Drawing.Size(254, 97);
             this.GroupBox2.TabIndex = 7;
             this.GroupBox2.TabStop = false;
-            this.GroupBox2.Text = "Pallet";
+            this.GroupBox2.Text = "Паллет";
             // 
             // PalletNum
             // 
             this.PalletNum.AutoSize = true;
-            this.PalletNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.PalletNum.Location = new System.Drawing.Point(6, 24);
+            this.PalletNum.Font = new System.Drawing.Font("Microsoft Sans Serif", 48F);
+            this.PalletNum.Location = new System.Drawing.Point(4, 22);
             this.PalletNum.Name = "PalletNum";
-            this.PalletNum.Size = new System.Drawing.Size(51, 55);
+            this.PalletNum.Size = new System.Drawing.Size(68, 73);
             this.PalletNum.TabIndex = 0;
             this.PalletNum.Text = "0";
             // 
@@ -1288,12 +1334,12 @@
             this.groupBox3.BackColor = System.Drawing.Color.Green;
             this.groupBox3.Controls.Add(this.BoxNum);
             this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.groupBox3.Location = new System.Drawing.Point(6, 119);
+            this.groupBox3.Location = new System.Drawing.Point(6, 19);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(256, 97);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Текущаяя корбка";
+            this.groupBox3.Text = "Текущая коробка";
             // 
             // BoxNum
             // 
@@ -1507,5 +1553,7 @@
         private System.Windows.Forms.NumericUpDown Delay1;
         private System.Windows.Forms.Button SaveDelay;
         private System.Windows.Forms.Label SaveDelays;
+        private System.Windows.Forms.Label Fas_StartRange;
+        internal System.Windows.Forms.Label FASENDLB;
     }
 }

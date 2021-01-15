@@ -31,7 +31,6 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.BT_OK = new System.Windows.Forms.Button();
-            this.LoadLB = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // listBox1
@@ -68,23 +67,11 @@
             this.BT_OK.Text = "Выбрать";
             this.BT_OK.UseVisualStyleBackColor = false;
             // 
-            // LoadLB
-            // 
-            this.LoadLB.AutoSize = true;
-            this.LoadLB.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.LoadLB.Location = new System.Drawing.Point(354, 9);
-            this.LoadLB.Name = "LoadLB";
-            this.LoadLB.Size = new System.Drawing.Size(52, 24);
-            this.LoadLB.TabIndex = 3;
-            this.LoadLB.Text = "Load";
-            this.LoadLB.Visible = false;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 478);
-            this.Controls.Add(this.LoadLB);
             this.Controls.Add(this.BT_OK);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.listBox1);
@@ -101,7 +88,6 @@
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button BT_OK;
-        private System.Windows.Forms.Label LoadLB;
     }
 }
 

@@ -19,22 +19,63 @@ namespace GS_STB
         public Form1()
         {
             InitializeComponent();
-            GetListApp();
+            GetListApp();            
             GetModule();//Вывод списка в ЛистБокс            
             List<BaseClass> ListClasses = new List<BaseClass>() { new FAS_END(), new UploadStation(), new FASStart(), new Desassembly_STB(), new FAS_Weight_control(), };
 
             BT_OK.Click += (a, e) => // Событие нажатие кнопки
-            {               
-                if (CheckIndex()) OpenModule(ListClasses[listBox1.SelectedIndex]);  
+            {
+                IndexOpen(ListClasses);
             };
 
             listBox1.DoubleClick += (a, e) => // Событие нажатие кнопки
             {
-                if (CheckIndex()) OpenModule(ListClasses[listBox1.SelectedIndex]);
-            };
-
+                IndexOpen(ListClasses);
+            };         
 
         }
+
+        void GetLot(DataGridView Grid)
+        {
+            using (FASEntities FAS = new FASEntities())
+            {
+                var list = from Lot in FAS.FAS_GS_LOTs
+                           join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID
+                           where Lot.IsActive == true
+                           orderby Lot.LOTID descending
+                           select new
+                           {
+                               Lot = Lot.LOTCode,
+                               Full_Lot = Lot.FULL_LOT_Code,
+                               Model = model.ModelName,
+                               InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
+                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+                               User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+                               //Lot.LOTID,             
+                               СтартДиапозон = Lot.RangeStart,
+                               КонецДиапозон = Lot.RangeEnd,
+                               Lot.FixedRG,
+                               Lot.StartDate
+                           };
+
+                Grid.DataSource = list.ToList();
+            }
+        }
+
+        private void IndexOpen(List<BaseClass> ListClasses)
+        {
+            if (CheckIndex())
+            {
+                if (listBox1.SelectedIndex == 5)
+                { OpenModule(); return; }
+
+                if (listBox1.SelectedIndex == 6)
+                { OpenModuleAbortSN(); return; }
+
+                OpenModule(ListClasses[listBox1.SelectedIndex]);//Открытие модулей GS_STB, которые работают на линии
+            }
+        }
+
         protected List<string> ListApp = new List<string>() {  };
         // Список модулей
         void GetModule() //Вывод списка в ЛистБокс
@@ -45,8 +86,8 @@ namespace GS_STB
 
         void GetListApp()
         {
-            using (FASEntities Fas = new FASEntities())
-            {   short[] sh = new short[]{4,3,5,20,2};
+            using (FASEntities Fas = new FASEntities()) //131,37
+            {   short[] sh = new short[]{4,3,5,20,2,24, 37};
                 ListApp.AddRange(Fas.FAS_Applications.Where(c => sh.Contains(c.App_ID)).Select(c => c.App_Name).AsEnumerable());
             }
         }
@@ -63,13 +104,22 @@ namespace GS_STB
 
         void OpenModule(BaseClass BC) //Открытие определенного класса
         {            
-            SettingsForm settingsForm = new SettingsForm(BC);
-            this.ShowInTaskbar = false;
-            this.WindowState = FormWindowState.Minimized;
-            var r = settingsForm.ShowDialog();
-            this.ShowInTaskbar = true;
-            this.WindowState = FormWindowState.Maximized;
+            SettingsForm settingsForm = new SettingsForm(BC);           
+            var r = settingsForm.ShowDialog();           
         }
+
+        void OpenModule() //Открытие определенного класса
+        {
+            FAS_LOT_Managment Managment = new FAS_LOT_Managment();
+            Managment.ShowDialog();
+        }
+
+        void OpenModuleAbortSN() //Открытие определенного класса
+        {
+            AbortSNcs AbortForm = new AbortSNcs();
+            AbortForm.ShowDialog();
+        }
+
 
     }
 }

@@ -18,13 +18,14 @@ namespace GS_STB.Class_Modules
     {
         List<string> PrintSetpath = new List<string>() { @"C:\PrinterSettings\XSN,0.txt", @"C:\PrinterSettings\YSN,0.txt", @"C:\PrinterSettings\YID,0.txt", @"C:\PrinterSettings\XID,0.txt" };
         public Control control { get; set; }
+        public DataGridView GridRange = new DataGridView();
         public string printName { get; set; }
-        public bool PrintBool { get; set; }
+        //public bool PrintBool { get; set; }
         public int labelCount { get; set; }
         public int ShiftID { get; set; }
         public bool CheckBoxDublicateSCID { get; set; }
         public int LabelScenarioID { get; set; }
-        public int SelectedRow { get; set; }
+        //public int SelectedRow { get; set; }
         public int LocX { get; } = 827;
         public int LocY { get; } = 306;
         public ArrayList ArrayList { get; set; }
@@ -33,9 +34,13 @@ namespace GS_STB.Class_Modules
         public int LotCode { get; set; }
         public int PCBID { get; set; }
         public string LineForPrint { get; set; }
-        //public int literindex { get; set; }
-        //public int BoxCapacity { get; set; }
-        //public int PalletCapacity { get; set; }
+
+        public short LitIndex { get; set; }
+        public int StartRangeLot { get; set; }
+
+        public int EndRangeLot { get; set; }
+        public int StartRange { get; set; }
+        public int EndRange { get; set; }
         public int ShiftCounter { get; set; }
         public int LotCounter { get; set; }
         public int ShiftCounterID { get; set; }
@@ -51,7 +56,7 @@ namespace GS_STB.Class_Modules
         public int UpPrintCountID { get; set; }
         public string COMPORT { get; set; }
 
-        public int Delay { get; set; } = 200;
+        //public int Delay { get; set; } = 200;
 
         public bool CheckGetSN { get; set; } = false;
 
@@ -69,6 +74,7 @@ namespace GS_STB.Class_Modules
         {
             control.Invoke((Action)(() =>
             {
+                label.Visible = true;
                 label.Text = TEXT;
                 label.ForeColor = color;
             }));
@@ -149,13 +155,13 @@ namespace GS_STB.Class_Modules
             return X;
         }
 
-        public void GetLineForPrint(int lineID)
-        {
-            using (FASEntities FAS = new FASEntities())
-            {
-                LineForPrint = FAS.FAS_Lines.Where(c => c.LineID == lineID).Select(c => c.Print_Line).FirstOrDefault();
-            }
-        }
+        //public void GetLineForPrint(int lineID)
+        //{
+        //    using (FASEntities FAS = new FASEntities())
+        //    {
+        //        LineForPrint = FAS.FAS_Lines.Where(c => c.LineID == lineID).Select(c => c.Print_Line).FirstOrDefault();
+        //    }
+        //}
 
 
         public void ShiftCounterUpdate()
@@ -163,7 +169,9 @@ namespace GS_STB.Class_Modules
             using (FASEntities FAS = new FASEntities())
             {
                 var date = DateTime.UtcNow.Day + DateTime.UtcNow.Month + DateTime.UtcNow.Year;
-                var FF = FAS.FAS_ShiftsCounter.Where(c => c.StationID == StationID & c.ShiftID == ShiftID & c.ID_App == IDApp & c.CreateDate.Day + c.CreateDate.Month + c.CreateDate.Year == date);
+                var FF = FAS.FAS_ShiftsCounter.Where(c => c.StationID == StationID & c.ShiftID == ShiftID & c.ID_App == IDApp & c.CreateDate.Day + c.CreateDate.Month + c.CreateDate.Year == date).OrderByDescending(c=>c.CreateDate);
+                //var FF = FAS.FAS_ShiftsCounter.Where(c => c.StationID == StationID & c.ShiftID == ShiftID & c.ID_App == IDApp & c.CreateDate == DateTime.UtcNow);
+
                 FF.FirstOrDefault().ShiftCounter = ShiftCounter;
                 FAS.SaveChanges();
             }
@@ -175,7 +183,6 @@ namespace GS_STB.Class_Modules
             using (FASEntities FAS = new FASEntities())
             {
                 var date = DateTime.UtcNow.Day + DateTime.UtcNow.Month + DateTime.UtcNow.Year;
-
 
                 var F = FAS.FAS_ShiftsCounter.Where(c => c.ID == ShiftCounterID);
                 F.FirstOrDefault().LOT_Counter = LotCounter;
@@ -214,7 +221,7 @@ namespace GS_STB.Class_Modules
                 {
                     var date = DateTime.UtcNow.Day + DateTime.UtcNow.Month + DateTime.UtcNow.Year;
 
-                    var lists = FAS.FAS_ShiftsCounter
+                    var lists = FAS.FAS_ShiftsCounter.OrderByDescending(c => c.CreateDate)
                         .Where(c => c.StationID == StationID & c.ID_App == IDApp & c.ShiftID == ShiftID & c.LOTID == LOTID & c.CreateDate.Day + c.CreateDate.Month + c.CreateDate.Year == date)
                         .Select(c => new { c.ID, c.ShiftCounter,c.LOT_Counter }).ToList();
 

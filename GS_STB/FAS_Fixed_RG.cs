@@ -12,14 +12,13 @@ namespace GS_STB
     using System;
     using System.Collections.Generic;
     
-    public partial class FAS_PackingCounter
+    public partial class FAS_Fixed_RG
     {
-        public int ID { get; set; }
-        public short PalletCounter { get; set; }
-        public short BoxCounter { get; set; }
-        public short UnitCounter { get; set; }
-        public byte LineID { get; set; }
-        public short LOTID { get; set; }
-        public Nullable<short> LitIndex { get; set; }
+        public int id { get; set; }
+        public int LotID { get; set; }
+        public short LitIndex { get; set; }
+        public int RGStart { get; set; }
+        public int RGEnd { get; set; }
+        public System.DateTime LabDate { get; set; }
     }
 }

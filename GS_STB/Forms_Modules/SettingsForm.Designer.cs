@@ -441,6 +441,7 @@
             this.DG_LOTList.Cursor = System.Windows.Forms.Cursors.Default;
             this.DG_LOTList.Location = new System.Drawing.Point(6, 19);
             this.DG_LOTList.Name = "DG_LOTList";
+            this.DG_LOTList.ReadOnly = true;
             this.DG_LOTList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.DG_LOTList.Size = new System.Drawing.Size(787, 572);
             this.DG_LOTList.TabIndex = 4;

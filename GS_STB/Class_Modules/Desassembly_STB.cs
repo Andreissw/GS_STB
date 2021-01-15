@@ -226,27 +226,38 @@ namespace GS_STB.Class_Modules
 
         void GetLot(DataGridView Grid)
         {
-            using (FASEntities FAS = new FASEntities())
-            {
-                var list = from Lot in FAS.FAS_GS_LOTs
-                           join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID
-                           join Label in FAS.FAS_LabelScenario on Lot.LabelScenarioID equals Label.ID
-                           where Lot.IsActive == true
-                           orderby Lot.LOTID descending
-                           select new
-                           {
-                               Lot = Lot.LOTCode,
-                               Full_Lot = Lot.FULL_LOT_Code,
-                               Model = model.ModelName,
-                               InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true  &  s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
-                               Lot.LOTID                             
-                           };
+            loadgrid.Loadgrid(Grid, @"use FAS select 
+LOTCode,FULL_LOT_Code,ModelName,
+(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID) InLot,
+(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 0 and s.IsActive = 1) Ready,
+(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 1 ) Used,
+LOTID
+from FAS_GS_LOTs as gs
+left join FAS_Models as m on gs.ModelID = m.ModelID
 
-                Grid.DataSource = list.ToList();
+where IsActive = 1
+order by LOTID desc ");
+            //using (FASEntities FAS = new FASEntities())
+            //{
+            //    var list = from Lot in FAS.FAS_GS_LOTs
+            //               join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID
+            //               join Label in FAS.FAS_LabelScenario on Lot.LabelScenarioID equals Label.ID
+            //               where Lot.IsActive == true
+            //               orderby Lot.LOTID descending
+            //               select new
+            //               {
+            //                   Lot = Lot.LOTCode,
+            //                   Full_Lot = Lot.FULL_LOT_Code,
+            //                   Model = model.ModelName,
+            //                   InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
+            //                   Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true  &  s.LOTID == Lot.LOTID select s.LOTID).Count(),
+            //                   User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
+            //                   Lot.LOTID                             
+            //               };
 
-            }
+            //    Grid.DataSource = list.ToList();
+
+            //}
         }
     }
 }

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="1055207037eb4ee685a72d215eeb6873" Name="Diagram1">
+      <Diagram DiagramId="1055207037eb4ee685a72d215eeb6873" Name="Diagram1" ZoomLevel="82">
         <EntityTypeShape EntityType="FASModel.FAS_App_ListForPC" Width="1.5" PointX="11" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Applications" Width="1.5" PointX="8.75" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="FASModel.FAS_Breaks" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
@@ -57,7 +57,8 @@
         <AssociationConnector Association="FASModel.FK_FAS_Start_FAS_Users" ManuallyRouted="false" />
         <AssociationConnector Association="FASModel.FK_FAS_Upload_FAS_Users" ManuallyRouted="false" />
         <AssociationConnector Association="FASModel.FK_FAS_Users_FAS_UserGroup" ManuallyRouted="false" />
-      </Diagram>
+        <EntityTypeShape EntityType="FASModel.FAS_Fixed_RG" Width="1.5" PointX="11.375" PointY="15.75" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

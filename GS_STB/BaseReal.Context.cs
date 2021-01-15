@@ -57,5 +57,6 @@ namespace GS_STB
         public virtual DbSet<FAS_Users> FAS_Users { get; set; }
         public virtual DbSet<FAS_WeightStation> FAS_WeightStation { get; set; }
         public virtual DbSet<FAS_WorkingScenario> FAS_WorkingScenario { get; set; }
+        public virtual DbSet<FAS_Fixed_RG> FAS_Fixed_RG { get; set; }
     }
 }
