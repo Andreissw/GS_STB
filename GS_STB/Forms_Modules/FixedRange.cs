@@ -25,7 +25,7 @@ namespace GS_STB.Forms_Modules
         public FixedRange(int LotID)
         {
             InitializeComponent();
-            LBText.Text = "В лоте присутствует разбивка серийных номеров на \n диапозоны, выберите нужный вам диапозон";
+            LBText.Text = "В лоте присутствует разбивка серийных номеров на \n диапазоны, выберите нужный вам диапазон";
             this.LotID = LotID;            
             button2.Enabled = true;
             AbortSn = true;
@@ -34,11 +34,10 @@ namespace GS_STB.Forms_Modules
         public FixedRange(int LotID, BaseClass BC)
         {
             InitializeComponent();
-            LBText.Text = "В лоте присутствует разбивка серийных номеров на \n диапозоны, выберите нужный вам диапозон";
+            LBText.Text = "В лоте присутствует разбивка серийных номеров на \n диапазоны, выберите нужный вам диапазон";
             this.LotID = LotID;
             this.BC = BC;
             button2.Enabled = true;
-
         }
 
         public FixedRange(int LotID, BaseClass BC,string TEXT,int index)
@@ -49,8 +48,6 @@ namespace GS_STB.Forms_Modules
             this.LotID = LotID;
             this.BC = BC;
             button2.Enabled = false;
-
-
         }
 
         private void FixedRange_Load(object sender, EventArgs e)
@@ -65,15 +62,14 @@ namespace GS_STB.Forms_Modules
             {
                 var list = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID).ToList().Select(b => new
                 {
-                    СтартДиапозон = b.RGStart,
-                    КонецДиапозон = b.RGEnd,
+                    Стартдиапазон = b.RGStart,
+                    Конецдиапазон = b.RGEnd,
                     b.LotID,
                     ЛитерИндекс = b.LitIndex,
                     ДатаЭтикетки = b.LabDate,
-                    Номеров_в_диапозоне = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd).Count(),
+                    Номеров_в_диапазоне = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd).Count(),
                     Не_использованных = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd && c.IsUsed == false).Count()
                 });
-
                 //var list = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID).ToList();
                 GridRange.DataSource = list.ToList();
             }
@@ -85,12 +81,12 @@ namespace GS_STB.Forms_Modules
             {
                 var list = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID).ToList().Select(b => new
                 {
-                    СтартДиапозон = b.RGStart,
-                    КонецДиапозон = b.RGEnd,
+                    Стартдиапазон = b.RGStart,
+                    Конецдиапазон = b.RGEnd,
                     b.LotID,
                     ЛитерИндекс = b.LitIndex,
                     ДатаЭтикетки = b.LabDate,
-                    Номеров_в_диапозоне = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd).Count(),
+                    Номеров_в_диапазоне = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd).Count(),
                     Для_упаковки = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd
                     && c.IsUsed == true && c.IsActive == true && c.IsPacked == false && c.IsUploaded == true && c.IsWeighted == true).Count(),
                     Не_использованных = fas.FAS_SerialNumbers.Where(c => c.LOTID == LotID && c.SerialNumber >= b.RGStart && c.SerialNumber <= b.RGEnd && c.IsUsed == false).Count(),                   
@@ -109,7 +105,7 @@ namespace GS_STB.Forms_Modules
             else
                 GetInfoFasStart();
 
-                if (index != 0) //Условие на следующий диапозон
+                if (index != 0) //Условие на следующий диапазон
                 {
                     int Result = 0;
                     for (int i = 0; i < GridRange.RowCount; i++) //отмечаем строки, которые можно выбрать
@@ -123,20 +119,16 @@ namespace GS_STB.Forms_Modules
 
                         GridRange.Rows[i].DefaultCellStyle.BackColor = Color.Green; Result += 1;  
                     }
-                    if (Result == 0) //Если номера в диапозонах закончились
-                    { this.DialogResult = DialogResult.Abort;this.Close(); }
-
-                    
+                    if (Result == 0) //Если номера в диапазонах закончились
+                    { this.DialogResult = DialogResult.Abort;this.Close(); }                    
                 }
-            }
-        //}
+            }        
 
         private void button1_Click(object sender, EventArgs e)
         {
-
             int I = GridRange.CurrentRow.Index;
             if (I == -1 || GridRange.RowCount == 0)
-            { MessageBox.Show("Диапозон не выбран"); return; }
+            { MessageBox.Show("диапазон не выбран"); return; }
 
             if (AbortSn) // Если запускаем форму Abort
             {
@@ -150,24 +142,24 @@ namespace GS_STB.Forms_Modules
                 return;
             }
 
-            if (index != 0)//Если закончился диапозон, и нужно включить следующий
+            if (index != 0)//Если закончился диапазон, и нужно включить следующий
                 if (GridRange[3,I].Value.ToString() != (index + 1).ToString()) 
-                { MessageBox.Show($"Вы можете выбрать диапозон только с ЛитерИндекс - {index + 1}"); return; }
+                { MessageBox.Show($"Вы можете выбрать диапазон только с ЛитерИндекс - {index + 1}"); return; }
 
             if (GridRange[6, I].Value.ToString() == "0") 
-            { MessageBox.Show("Текущий диапозон израсходован"); return; }
+            { MessageBox.Show("Текущий диапазон израсходован"); return; }
 
             BC.LitIndex = short.Parse(GridRange[3, I].Value.ToString());
 
             using (var fas = new FASEntities())
             {
-                //Старт диапозона в литере
+                //Старт диапазона в литере
                 BC.StartRange = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID && c.LitIndex == BC.LitIndex).Select(c => c.RGStart).Min();
-                //Конец диапозона в литере
+                //Конец диапазона в литере
                 BC.EndRange = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID && c.LitIndex == BC.LitIndex).Select(c => c.RGEnd).Max();
-                //Старт диапозона в лоте
+                //Старт диапазона в лоте
                 BC.StartRangeLot = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID).Select(c => c.RGStart).Min();
-                //Конец диапозона в лоте
+                //Конец диапазона в лоте
                 BC.EndRangeLot = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID).Select(c => c.RGEnd).Max();
                 var l = fas.FAS_Fixed_RG.Where(c => c.LotID == LotID && c.LitIndex == BC.LitIndex).Select(c => new { c.RGStart, c.RGEnd, c.LabDate });
 
@@ -180,20 +172,29 @@ namespace GS_STB.Forms_Modules
                     BC.GridRange[0, index].Value = item.RGStart; BC.GridRange[1, index].Value = item.RGEnd; BC.GridRange[2, index].Value = item.LabDate;                   
                     index += 1;
                 }
-
             }
+
+            var confim = new ConfimUser();
+            var Result = confim.ShowDialog();
+
+            if (Result == DialogResult.Cancel)
+                return;
 
             this.DialogResult = DialogResult.OK;            
             this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
-        {
+        {          
             DialogResult = DialogResult.Cancel;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            var confim = new ConfimUser();
+            var Result = confim.ShowDialog();
+            if (Result == DialogResult.Cancel)
+                return;
             DialogResult = DialogResult.Retry;
             this.Close();
         }

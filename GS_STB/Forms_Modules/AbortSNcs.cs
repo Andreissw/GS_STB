@@ -16,12 +16,10 @@ namespace GS_STB.Forms_Modules
         {
             InitializeComponent();
         }
-
         private void AbortSNcs_Load(object sender, EventArgs e)
         {
             GetLot();
         }
-
         void GetLot()
         {
             using (FASEntities FAS = new FASEntities())
@@ -39,8 +37,8 @@ namespace GS_STB.Forms_Modules
                                        Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                        Used = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                        LotID = Lot.LOTID,
-                                       СтартДиапозон = Lot.RangeStart,
-                                       КонецДиапозон = Lot.RangeEnd,
+                                       Стартдиапазон = Lot.RangeStart,
+                                       Конецдиапазон = Lot.RangeEnd,
                                        FixedRG = Lot.FixedRG,
                                        StartDate = Lot.StartDate
                                    }).ToArray();
@@ -88,15 +86,12 @@ namespace GS_STB.Forms_Modules
             SNGrid.Select();
 
         }
-
         private void AbortBT_Click(object sender, EventArgs e)
         {
             List<int> list = new List<int>();
 
             for (int i = 0; i < SNGrid.RowCount; i++)
                 list.Add(int.Parse(SNGrid[1, i].Value.ToString()));
-
-
 
             using (var fas = new FASEntities())
             {
@@ -106,18 +101,15 @@ namespace GS_STB.Forms_Modules
                 var deleteFas = fas.FAS_Start.Where(c => list.Contains(c.SerialNumber));
                 fas.FAS_Start.RemoveRange(deleteFas);
 
-
                 //--------------------------------------------------------------------------------------------------
                 var _fas = fas.FAS_SerialNumbers.Where(c => list.Contains(c.SerialNumber)).AsEnumerable().Select(c=> 
                 { c.IsUsed = false; c.IsActive = true; c.IsUploaded = false; c.IsWeighted = false; c.IsPacked = false;                    
                 return c; });
 
                 foreach (FAS_SerialNumbers item in _fas)                
-                    fas.Entry(item).State = (System.Data.Entity.EntityState)EntityState.Modified;      
-                
+                    fas.Entry(item).State = (System.Data.Entity.EntityState)EntityState.Modified;                      
                 fas.SaveChanges();               
             }
-
             INFO.Text = "Номера откреплены успешно!";
             SNGrid.DataSource = null;
         }

@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.GB_UserData = new System.Windows.Forms.GroupBox();
             this.BT_LogOut = new System.Windows.Forms.Button();
             this.Label13 = new System.Windows.Forms.Label();
@@ -127,6 +127,7 @@
             this.LBPrintSN = new System.Windows.Forms.Label();
             this.CurrrentTimeLabel = new System.Windows.Forms.Label();
             this.Times = new System.Windows.Forms.Timer(this.components);
+            this.PrintCheckSN = new System.Windows.Forms.CheckBox();
             this.GB_UserData.SuspendLayout();
             this.GB_Work.SuspendLayout();
             this.SettingDelay.SuspendLayout();
@@ -212,6 +213,7 @@
             // 
             // GB_Work
             // 
+            this.GB_Work.Controls.Add(this.PrintCheckSN);
             this.GB_Work.Controls.Add(this.FASENDLB);
             this.GB_Work.Controls.Add(this.Fas_StartRange);
             this.GB_Work.Controls.Add(this.SettingDelay);
@@ -1177,15 +1179,15 @@
             // 
             this.DG_UpLog.AllowUserToAddRows = false;
             this.DG_UpLog.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DG_UpLog.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DG_UpLog.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle11;
             this.DG_UpLog.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.DG_UpLog.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DG_UpLog.Location = new System.Drawing.Point(0, 383);
             this.DG_UpLog.Name = "DG_UpLog";
             this.DG_UpLog.ReadOnly = true;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DG_UpLog.RowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DG_UpLog.RowsDefaultCellStyle = dataGridViewCellStyle12;
             this.DG_UpLog.Size = new System.Drawing.Size(989, 229);
             this.DG_UpLog.TabIndex = 26;
             this.DG_UpLog.TabStop = false;
@@ -1255,6 +1257,7 @@
             this.Column2});
             this.GridInfo.Location = new System.Drawing.Point(6, 31);
             this.GridInfo.Name = "GridInfo";
+            this.GridInfo.ReadOnly = true;
             this.GridInfo.RowHeadersVisible = false;
             this.GridInfo.Size = new System.Drawing.Size(446, 254);
             this.GridInfo.TabIndex = 26;
@@ -1264,12 +1267,14 @@
             // 
             this.Column1.HeaderText = "Column1";
             this.Column1.Name = "Column1";
+            this.Column1.ReadOnly = true;
             this.Column1.Width = 5;
             // 
             // Column2
             // 
             this.Column2.HeaderText = "Column2";
             this.Column2.Name = "Column2";
+            this.Column2.ReadOnly = true;
             this.Column2.Width = 5;
             // 
             // FAS_EndGB
@@ -1392,6 +1397,18 @@
             // 
             this.Times.Tick += new System.EventHandler(this.Times_Tick);
             // 
+            // PrintCheckSN
+            // 
+            this.PrintCheckSN.AutoSize = true;
+            this.PrintCheckSN.Location = new System.Drawing.Point(998, 419);
+            this.PrintCheckSN.Name = "PrintCheckSN";
+            this.PrintCheckSN.Size = new System.Drawing.Size(272, 17);
+            this.PrintCheckSN.TabIndex = 1003;
+            this.PrintCheckSN.Text = "Печать серийного номера по серийному номеру";
+            this.PrintCheckSN.UseVisualStyleBackColor = true;
+            this.PrintCheckSN.Visible = false;
+            this.PrintCheckSN.Click += new System.EventHandler(this.PrintCheckSN_Click);
+            // 
             // WorkForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1403,7 +1420,6 @@
             this.Name = "WorkForm";
             this.Text = "WorkForm";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WorkForm_FormClosed);
             this.GB_UserData.ResumeLayout(false);
             this.GB_UserData.PerformLayout();
             this.GB_Work.ResumeLayout(false);
@@ -1555,5 +1571,6 @@
         private System.Windows.Forms.Label SaveDelays;
         private System.Windows.Forms.Label Fas_StartRange;
         internal System.Windows.Forms.Label FASENDLB;
+        private System.Windows.Forms.CheckBox PrintCheckSN;
     }
 }

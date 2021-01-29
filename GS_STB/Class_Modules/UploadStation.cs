@@ -49,21 +49,17 @@ namespace GS_STB.Class_Modules
 
         }
         public override void GetComponentClass()
-        {
-            
-            var UploadStationGB = control.Controls.Find("UploadStationGB", true).FirstOrDefault();
-            
+        {            
+            var UploadStationGB = control.Controls.Find("UploadStationGB", true).FirstOrDefault();            
             UploadStationGB.Visible = true;
             UploadStationGB.Location = new Point(LocX, LocY);
             UploadStationGB.Size = new Size(214, 96);            
-
             var Grid = (DataGridView)control.Controls.Find("DG_LOTList", true).FirstOrDefault();
             GetLot(Grid);
         }
 
         public override void LoadWorkForm()
-        {
-            
+        {            
             Label Label_ShiftCounter = control.Controls.Find("Label_ShiftCounter", true).OfType<Label>().FirstOrDefault();
             Label LB_LOTCounter = control.Controls.Find("LB_LOTCounter", true).OfType<Label>().FirstOrDefault();
             Label COM = control.Controls.Find("COM", true).OfType<Label>().FirstOrDefault();
@@ -220,9 +216,8 @@ namespace GS_STB.Class_Modules
                     if (string.IsNullOrEmpty(printName))
                     { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return "true"; }
 
-                //Перед преобразованием проверяем может ли ShortSN быть типом int
-                int k = 0;
-                if (!int.TryParse(_SN.Substring(15), out k))
+                //Перед преобразованием проверяем может ли ShortSN быть типом int                
+                if (!int.TryParse(_SN.Substring(15), out int k))
                 { LabelStatus(Controllabel, $"Неверный формат номера {_SN}", Color.Red); return "true"; }
                 ShortSN = int.Parse(_SN.Substring(15)); //Если удачно, то преобразуем ShortSN
 
@@ -293,9 +288,7 @@ namespace GS_STB.Class_Modules
                         {
                             var SmID = fas.FAS_Upload.Where(c => c.SerialNumber == ShortSN).Select(c => c.SmartCardID).FirstOrDefault();                       
                             LabelStatus(Controllabel, $"{_SN} - Серийный номер уже присвоен другому приемнику  \n Его SmartID - {SmID} ", Color.Red); return "true";
-                        }
-                    
-
+                        }                
 
                 if (CASIDShortSerial == ShortSN)   //ShortSN с базы равен с введенным ShortSN 
                 {
@@ -330,7 +323,6 @@ namespace GS_STB.Class_Modules
                         //Удаляем с Upload      //ставим флажки в SerialNumbers
                         Remove_Fas_Upload(); SetBoolSerialNumbers(ShortSN);
                 }
-
 
                 ArrayLoadSnData = LoadSnData(ShortSN);
                 //Проверка на содерждимое arrayLista 
@@ -378,7 +370,6 @@ namespace GS_STB.Class_Modules
             using (var Fas = new FASEntities())
             {
                 var ArrayList = new ArrayList();
-
                 var list = (from S in Fas.FAS_PackingGS
                             join U in Fas.FAS_Users on S.PackingByID equals U.UserID
                             join L in Fas.FAS_Liter on S.LiterID equals L.ID
@@ -398,7 +389,7 @@ namespace GS_STB.Class_Modules
             }
         }
 
-            private void Prints(string TextCode, string TextSN, string SmartID,DateTime DateText)// Печать
+        private void Prints(string TextCode, string TextSN, string SmartID,DateTime DateText)// Печать
         {
             if (CheckPathPrinterSettings())
                 CreatePathPrinter();
@@ -442,7 +433,6 @@ namespace GS_STB.Class_Modules
                     FullSTBSN = fullstbsn,
                     CASID = CASID
                 };
-
                 FAS.FAS_OperationLog.Add(Fas);
                 FAS.SaveChanges();
             }
@@ -481,7 +471,6 @@ namespace GS_STB.Class_Modules
                     UploadDate = DateTime.UtcNow.AddHours(2),
                     UploadByID = (short)UserID
                 };
-
                 FAS.FAS_Upload.Add(Upload);
                 FAS.SaveChanges();
             }
@@ -502,13 +491,14 @@ namespace GS_STB.Class_Modules
             TextBox TB = control.Controls.Find("SerialTextBox", true).OfType<TextBox>().FirstOrDefault();
             Label Controllabel = control.Controls.Find("Controllabel", true).OfType<Label>().FirstOrDefault();
             var ClearBT = control.Controls.Find("ClearBT", true).OfType<Button>().FirstOrDefault();
-            var result = "true";          
+            var result = "true";         
 
             await Task.Run(() =>
-             {
-                 result = keyDown();
+            {
+                result = keyDown();
 
-             });
+            });
+
             if (result == "true")
                 { TB.Enabled = false; ClearBT.Enabled = true; }
             
@@ -535,10 +525,6 @@ namespace GS_STB.Class_Modules
                 LabelStatus(Controllabel, $@"Приемник ранее был добавлен в базу, печать номера отменена!", Color.Gray);
                 TB.Clear(); TB.Enabled = true; TB.Select(); ClearBT.Enabled = true;
             }
-
-          
-
-
         }
 
         delegate string Methods(Label lb);
@@ -548,11 +534,9 @@ namespace GS_STB.Class_Modules
             var Text = control.Controls.Find("ProgressbarText", true).OfType<Label>().FirstOrDefault();
 
             //Инициализация ПрогресБара         
-
             //Создаем с помощью делегата список методов, которые соврешают проверки
             List<Methods> ListMethods = new List<Methods>() { SetSN, GetModel, GetSmartID, GetSWVersion, GetSWGS1Version, GetHDCP, Getcert, GetMAC, GetSN,GetLDS };
             listdata = new List<string>();
-
             foreach (var item in ListMethods)
             {
                 control.Invoke((Action)(() =>
@@ -591,7 +575,6 @@ namespace GS_STB.Class_Modules
         //F.PCBID 0, S.IsUsed 1, S.IsActive 2, S.IsUploaded 3, S.IsWeighted 4, S.IsPacked 5, S.InRepair 6   
         string GetLDS (Label lb)
         {
-
             var LDS = SetLDS();
             if (LDS == "")
             { LabelStatus(lb, "Проблема прошивки \n Метод GetLDS не прошел", Color.Red); return ""; }
@@ -610,13 +593,11 @@ namespace GS_STB.Class_Modules
             var ReadSN = GetSN();
             if (ReadSN != _SN)
             { LabelStatus(lb, $"Считанный номер {ReadSN} не соответсвует прошитому {_SN}", Color.Red); return ""; }
-
             return ReadSN;
         }
 
         string SetSN(Label lb)
         {         
-
             var Result = SetSN(ArrayLoadSnData[4].ToString());
             if (Result == "")
             { 
@@ -624,9 +605,7 @@ namespace GS_STB.Class_Modules
                 SendToCOM(DataGenerationOneByte("8D", "0DF201180091"), 300);
                 return "";                
             }
-
             return Result;
-
         }
         string GetMAC(Label lb)
         {
@@ -778,8 +757,7 @@ namespace GS_STB.Class_Modules
         string GenMac(int SNshort) //40501557
         {
             var MacHex = int.Parse(SNshort.ToString().Substring(1,7)).ToString("X");
-            //MacHex = MacHex.ToString("X");
-            
+            //MacHex = MacHex.ToString("X");            
             if (MacHex.Length < 6)
                 for (int i = 0; i < 5; i++)
                 {
@@ -793,8 +771,7 @@ namespace GS_STB.Class_Modules
         string SetLDS()
         {
             var Delay = control.Controls.Find("Delay11", true).OfType<NumericUpDown>().FirstOrDefault();
-            var G = control.Controls.Find("TestGrid", true).OfType<DataGridView>().FirstOrDefault();
-            
+            var G = control.Controls.Find("TestGrid", true).OfType<DataGridView>().FirstOrDefault();            
             var D = int.Parse(Delay.Text);
             int timeout = 0;            
 
@@ -817,7 +794,6 @@ namespace GS_STB.Class_Modules
         {
             var G = control.Controls.Find("TestGrid", true).OfType<DataGridView>().FirstOrDefault();
             var Delay = control.Controls.Find("Delay2", true).OfType<NumericUpDown>().FirstOrDefault();
-
             var D = int.Parse(Delay.Text);
 
             var timeout = 300 + D;    
@@ -860,7 +836,6 @@ namespace GS_STB.Class_Modules
             var G = control.Controls.Find("TestGrid", true).OfType<DataGridView>().FirstOrDefault();
             var Delay = control.Controls.Find("Delay9", true).OfType<NumericUpDown>().FirstOrDefault();
             var D = int.Parse(Delay.Text);
-
             int timeout = 0;
             
             for (int i = 1; i < 6; i++)
@@ -942,8 +917,7 @@ namespace GS_STB.Class_Modules
         {
             string sHex = "";
             foreach (var item in Encoding.ASCII.GetBytes(MAC))            
-                sHex += Convert.ToString(new StringBuilder().AppendFormat("{0:X}", item));           
-
+                sHex += Convert.ToString(new StringBuilder().AppendFormat("{0:X}", item));   
             return sHex;
         }
         byte[] GetCERTKeyByte()
@@ -978,7 +952,6 @@ namespace GS_STB.Class_Modules
             Bools.RemoveAt(0);
             var B = Bools.OfType<bool>().ToList();
             //S.IsUsed, S.IsActive, S.IsUploaded, S.IsWeighted, S.IsPacked, S.InRepair
-
             //Used 1, Active 1,Uploaded 1, Packed 0, Repair 0 = Проверка прошла
             if (B[0] & B[1] & B[2] & !B[4] & !B[5])            
                 return "UpOk";
@@ -987,9 +960,6 @@ namespace GS_STB.Class_Modules
                 return "UpNok";
 
             return "false";//Если условие выше не пройдены, Проверка не пройдена
-
-           
-            
         }    
         string GetDatafromSTB(string ByteRequest,string ByteAnswer,string method,int row,string DelayName)
         {
@@ -1109,6 +1079,7 @@ left join FAS_Models as m on gs.ModelID = m.ModelID
 
 where IsActive = 1
 order by LOTID desc ");
+            #region Старый код
             //using (FASEntities FAS = new FASEntities())
             //{
             //    var list = from Lot in FAS.FAS_GS_LOTs
@@ -1126,7 +1097,8 @@ order by LOTID desc ");
             //               };
             //    Grid.DataSource = list.ToList();
             //}
-        }     
+            #endregion
+        }
         void SetBoolSerialNumbers(int serialnumber)
         {
             using (var FAS = new FASEntities())
@@ -1170,10 +1142,26 @@ order by LOTID desc ");
         {
             using (var fas = new FASEntities())
             {
-                //return "";
-                return (from lot in fas.FAS_GS_LOTs
+
+                var Result = (from lot in fas.FAS_GS_LOTs
                         join m in fas.FAS_Models on lot.ModelID equals m.ModelID
+                        where lot.LOTID == LOTID
                         select m.DelaySetting).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(Result))               
+                   return (from lot in fas.FAS_GS_LOTs
+                     join m in fas.FAS_Models on lot.ModelID equals m.ModelID                     
+                     select m.DelaySetting).FirstOrDefault();
+
+                return Result;
+               
+
+                //var l = (from lot in fas.FAS_GS_LOTs
+                //         join m in fas.FAS_Models on lot.ModelID equals m.ModelID where lot.LOTID == LOTID
+                //         select m.DelaySetting).ToList();
+                //return "";
+
+
             }
         }
     }

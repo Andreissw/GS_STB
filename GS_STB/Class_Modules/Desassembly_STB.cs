@@ -111,9 +111,6 @@ namespace GS_STB.Class_Modules
                  LabelStatus(lb, $"{sn} - Проверка номера не пройдена, сообщите об ошибке технологу", Color.Red); return true; 
             } 
 
-            
-
-
         }
         ArrayList GetInfoPac(int serial)
         {
@@ -130,7 +127,6 @@ namespace GS_STB.Class_Modules
                 foreach (var value in report)
                     ArrayList.Add(value);
                 return ArrayList;
-
             }
         }
 
@@ -151,7 +147,6 @@ namespace GS_STB.Class_Modules
                 foreach (var value in report)
                     ArrayList.Add(value);
                 return ArrayList;
-
             }
         }
         ArrayList GetSerialNum(int shortSN)
@@ -171,18 +166,14 @@ namespace GS_STB.Class_Modules
                 foreach (var value in report)
                     ArrayList.Add(value);
                 return ArrayList;
-
             }
         }
 
 
         public override void GetComponentClass()
-        {
-            
-            var Grid = (DataGridView)control.Controls.Find("DG_LOTList", true).FirstOrDefault();
-           
-            GetLot(Grid);
-            
+        {            
+            var Grid = (DataGridView)control.Controls.Find("DG_LOTList", true).FirstOrDefault();           
+            GetLot(Grid);            
         }
 
       
@@ -237,6 +228,7 @@ left join FAS_Models as m on gs.ModelID = m.ModelID
 
 where IsActive = 1
 order by LOTID desc ");
+            #region Старый код
             //using (FASEntities FAS = new FASEntities())
             //{
             //    var list = from Lot in FAS.FAS_GS_LOTs
@@ -258,6 +250,7 @@ order by LOTID desc ");
             //    Grid.DataSource = list.ToList();
 
             //}
+            #endregion
         }
     }
 }

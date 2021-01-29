@@ -335,7 +335,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(227, 20);
             this.label4.TabIndex = 149;
-            this.label4.Text = "Начало даты в диапозоне";
+            this.label4.Text = "Начало даты в диапазоне";
             // 
             // DTPic
             // 
@@ -545,7 +545,7 @@
             this.BTRange.Name = "BTRange";
             this.BTRange.Size = new System.Drawing.Size(221, 48);
             this.BTRange.TabIndex = 148;
-            this.BTRange.Text = "Диапозон";
+            this.BTRange.Text = "диапазон";
             this.BTRange.UseVisualStyleBackColor = true;
             this.BTRange.Click += new System.EventHandler(this.button1_Click);
             // 

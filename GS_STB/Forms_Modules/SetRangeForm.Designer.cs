@@ -32,6 +32,8 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.GridRange = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
@@ -44,10 +46,12 @@
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BreakRangedGrid = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.GridRange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SNNum)).BeginInit();
             this.GRNotUsed.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GridExcelReport)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BreakRangedGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // GridRange
@@ -220,12 +224,44 @@
             this.Column3.Name = "Column3";
             this.Column3.ReadOnly = true;
             // 
+            // BreakRangedGrid
+            // 
+            this.BreakRangedGrid.AllowUserToAddRows = false;
+            this.BreakRangedGrid.AllowUserToResizeColumns = false;
+            this.BreakRangedGrid.AllowUserToResizeRows = false;
+            this.BreakRangedGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.BreakRangedGrid.BackgroundColor = System.Drawing.SystemColors.ButtonFace;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("MS Reference Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.BreakRangedGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            this.BreakRangedGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("MS Reference Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.BreakRangedGrid.DefaultCellStyle = dataGridViewCellStyle6;
+            this.BreakRangedGrid.Location = new System.Drawing.Point(17, 464);
+            this.BreakRangedGrid.Name = "BreakRangedGrid";
+            this.BreakRangedGrid.ReadOnly = true;
+            this.BreakRangedGrid.RowHeadersVisible = false;
+            this.BreakRangedGrid.Size = new System.Drawing.Size(264, 128);
+            this.BreakRangedGrid.TabIndex = 155;
+            // 
             // SetRangeForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1188, 658);
+            this.Controls.Add(this.BreakRangedGrid);
             this.Controls.Add(this.GridExcelReport);
             this.Controls.Add(this.GRNotUsed);
             this.Controls.Add(this.button2);
@@ -241,6 +277,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.SNNum)).EndInit();
             this.GRNotUsed.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.GridExcelReport)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BreakRangedGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -260,5 +297,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Column1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column2;
         private System.Windows.Forms.DataGridViewTextBoxColumn Column3;
+        private System.Windows.Forms.DataGridView BreakRangedGrid;
     }
 }

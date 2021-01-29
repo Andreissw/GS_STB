@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>\\192.168.180.9\ProdSoft\MES STB\</InstallUrl>
-    <ApplicationRevision>28</ApplicationRevision>
+    <ApplicationRevision>31</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -231,6 +231,12 @@
     <Compile Include="Forms_Modules\AbortSNcs.Designer.cs">
       <DependentUpon>AbortSNcs.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms_Modules\ConfimUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms_Modules\ConfimUser.Designer.cs">
+      <DependentUpon>ConfimUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms_Modules\FAS_LOT_Managment.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -300,6 +306,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms_Modules\AbortSNcs.resx">
       <DependentUpon>AbortSNcs.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms_Modules\ConfimUser.resx">
+      <DependentUpon>ConfimUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms_Modules\FAS_LOT_Managment.resx">
       <DependentUpon>FAS_LOT_Managment.cs</DependentUpon>

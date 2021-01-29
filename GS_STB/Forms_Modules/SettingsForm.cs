@@ -28,7 +28,6 @@ namespace GS_STB.Forms_Modules
         {
             InitializeComponent();
             this.BaseC = BC;
-
             var list = new List<string>();
             foreach (var item in PrinterSettings.InstalledPrinters)           
                 list.Add(item.ToString());
@@ -107,7 +106,6 @@ namespace GS_STB.Forms_Modules
             };
 
             BT_OpenSettings.Click += (a, e) => //Кнопка открытие настройки линии
-
             { 
                 OffComponents(LineSettings); BTBack.Visible = true; label2.Visible = false; GetSettingLine(); 
             };
@@ -173,10 +171,9 @@ namespace GS_STB.Forms_Modules
                 workForms.ShowDialog();                
                 return;
             }
-
                 //очистка данных после 3 индекса в ArrayList
-                if (BaseC.ArrayList.Count > 3)
-                BaseC.ArrayList.RemoveRange(3, BaseC.ArrayList.Count - 3);
+            if (BaseC.ArrayList.Count > 3)
+            BaseC.ArrayList.RemoveRange(3, BaseC.ArrayList.Count - 3);
 
             //Добавление LOTID из грида по выделенной строке 
             int LOTID = int.Parse(DG_LOTList[6, I].Value.ToString());
@@ -191,7 +188,6 @@ namespace GS_STB.Forms_Modules
                 BaseC.labelCount = int.Parse(TB_LabelSNCount.Text); //Указываем сколько этикеток печатать
                 BaseC.UpPrintSN = CheckBoxSN.Checked; //Указываем надо ли печатать этикетку
                                                       //Условие выбора сетевого времени или локального указанного вручную
-
                 if (DG_LOTList[10, I].Value != null)
                     if (DG_LOTList[10, I].Value.ToString() == "True")
                     {
@@ -199,10 +195,10 @@ namespace GS_STB.Forms_Modules
                         var Result = FR.ShowDialog();
                         if (Result == DialogResult.Cancel)//Если нажали отмена, выходим из метода
                             return;
-                        else if (Result == DialogResult.Retry)//Если нажали None(Работа без диапозона)
+                        else if (Result == DialogResult.Retry)//Если нажали None(Работа без диапазона)
                             BaseC.DateFas_Start = false; 
                         else
-                            BaseC.DateFas_Start = true; //Выбрали диапозон
+                            BaseC.DateFas_Start = true; //Выбрали диапазон
                     }
                 #region
                 //if (RB_Server_Time.Checked)
@@ -210,9 +206,7 @@ namespace GS_STB.Forms_Modules
                 //else
                 //{ BaseC.DateFas_Start = false; BaseC.DateFas_ST_Text = DateTimePicker.Value.ToString("dd.MM.yyyy"); } //Локальное
                 #endregion
-
             }
-
             //Условие, если базовый класс приведен к типу UploadStation
             if (BaseC.GetType() == typeof(UploadStation))
             {               
@@ -223,48 +217,36 @@ namespace GS_STB.Forms_Modules
                 BaseC.CheckBoxDublicateSCID = CheckBoxDublicateSCID.Checked; //Проверка на дубликат в таблице Fas_Upload
                 BaseC.GetPortName();
             }
-
             //Добавление данных в ArrayList из выделенного Лота
             for (int i = 0; i < 3; i++)          
                 BaseC.ArrayList.Add(DG_LOTList[i,DG_LOTList.CurrentRow.Index].Value.ToString());
 
-
             //Условие, если базовый класс приведен к типу FAS_END
             if (BaseC.GetType() == typeof(FAS_END))
             {  
-                if (DG_LOTList[12, I].Value != null) //Выбираем диапозон у лота
+                if (DG_LOTList[12, I].Value != null) //Выбираем диапазон у лота
                     if (DG_LOTList[12, I].Value.ToString() == "True")
                     {
                         FixedRange FR = new FixedRange(LOTID, BC);
                         var Result = FR.ShowDialog();
                         if (Result == DialogResult.Cancel)//Если нажали отмена, выходим из метода
                             return;
-                        else if (Result == DialogResult.Retry)//Если нажали None(Работа без диапозона)
+                        else if (Result == DialogResult.Retry)//Если нажали None(Работа без диапазона)
                             BaseC.DateFas_Start = false;
                         else
-                            BaseC.DateFas_Start = true; //Выбрали диапозон
-
-
+                            BaseC.DateFas_Start = true; //Выбрали диапазон
                         //BaseC.DateFas_Start = true;
                     }
 
                 BaseC.ArrayList.Add("");
                 for (int i = 4; i < 6; i++)
                     BaseC.ArrayList.Add(DG_LOTList[i, DG_LOTList.CurrentRow.Index].Value.ToString());
-            }
-
-         
+            }         
             //Открытие формы
             WorkForm workForm = new WorkForm(BC, LOTID);           
-             workForm.ShowDialog();
-          
+            workForm.ShowDialog();          
         }
-
-        void DateVoid()
-        { 
-            
-        }
-
+               
         void GetSettingLine()
         {
             CB_Line.Items.Clear();
@@ -286,6 +268,7 @@ namespace GS_STB.Forms_Modules
                                 join line in Fas.FAS_Lines on app.LineID equals line.LineID
                                 where app.StationID == BaseC.StationID & app.App_ID == BaseC.IDApp
                                 select line.LineName).FirstOrDefault();
+
                 if (string.IsNullOrEmpty(Name))
                     return true;
 
@@ -297,8 +280,7 @@ namespace GS_STB.Forms_Modules
         }
 
         int RegisterStation()//Регистрация компютера 
-        {
-            
+        {            
             using (FASEntities Fas = new FASEntities())
             {
                 var _nameStation = BaseC.ArrayList[1].ToString();
@@ -307,13 +289,10 @@ namespace GS_STB.Forms_Modules
                     StationName = _nameStation,
                     CreateDate = DateTime.UtcNow.AddHours(2)
                 };
-
                 Fas.FAS_Stations.Add(Station);
                 Fas.SaveChanges();
-
                 return Fas.FAS_Stations.Where(c => c.StationName == _nameStation).Select(c => c.StationID).FirstOrDefault();
             }
-            
         }
 
         bool GetStationID()//Берем ID компьютера с базы
@@ -325,8 +304,7 @@ namespace GS_STB.Forms_Modules
                 if (BaseC.StationID == 0)
                     return true;
                 return false;
-            }
-            
+            }            
         }
 
         void SetInfoGrid() //Добавление в грид информацию с ArrayList

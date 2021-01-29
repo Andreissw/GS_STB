@@ -33,8 +33,8 @@ namespace GS_STB.Forms_Modules
         //LotCode  FullLotCode 	Model Spec DTVS TRICOLOR Market  Ptid BOX Pallet HDCP  Cert Mac ModelCH SW SW1 Weight	Label Date	User st  end range stDate      
         List<string> ListName = new List<string>()         
         {"LotCode", "FullLotCode","LOTID", "Model", "Spec", "Manufacturer", "Operator","Market","PTID","BoxCapacity","PalletCapacity","HDCP","Cert","Mac"
-         ,"ModelCheck","SWRead","SWGS1Read","WeightCheck","LabelScenario","WorkingScenario","Дата создания","Создатель Лота","Начальный диапозон","Конечный диапозон"
-            ,"Работа по диапозону","Стартовая дата диапозона"};
+         ,"ModelCheck","SWRead","SWGS1Read","WeightCheck","LabelScenario","WorkingScenario","Дата создания","Создатель Лота","Начальный диапазон","Конечный диапазон"
+            ,"Работа по диапазону","Стартовая дата диапазона"};
 
         List<string> ListNameAdd = new List<string>()
         {"LotCode", "FullLotCode","Model", "Spec", "Manufacturer", "Operator","Market","PTID","BoxCapacity","PalletCapacity","HDCP","Cert","Mac"
@@ -97,8 +97,7 @@ namespace GS_STB.Forms_Modules
                 return;
             ShowGR(LotsGR, false);
             ShowGR(AddLotGR, true);
-            OpenAdd();
-            
+            OpenAdd();            
         }
 
         private void OpenAdd() //Обновление грида на добавление лота
@@ -234,10 +233,7 @@ namespace GS_STB.Forms_Modules
                 AddSerialNumber(LotID);
 
             OpenAdd();
-            MessageBox.Show("Лот успешно добавлен!");
-            //if (bool.Parse(GridAddLot[1, 19].Value.ToString()) == true)
-            //    RangeMethod((int)NumerSN.Value, 11); 
-
+            MessageBox.Show("Лот успешно добавлен!");       
         }
 
         void RangeMethod(int snIn,int lotid)
@@ -366,8 +362,6 @@ namespace GS_STB.Forms_Modules
 
         private void UpdateBT_Click(object sender, EventArgs e) //Update данных
         {
-            //LotCode  FullLotCode LOTID Model Spec DTVS TRICOLOR Market  Ptid BOX Pallet HDCP  Cert Mac ModelCH SW SW1 Weight
-            //Label Date	User st  end range stDate      
             short lotid = short.Parse(GridInfo[1,2].Value.ToString());
             using (var FAS = new FASEntities())
             {
@@ -421,7 +415,6 @@ namespace GS_STB.Forms_Modules
 
             CellData = "";
         }
-
         private void GridAddLot_SelectionChanged(object sender, EventArgs e) //Открытие по щелчку списка у comboBox в элементе DataGrid
         {
             DataGridView DG = sender as DataGridView;
@@ -460,7 +453,6 @@ namespace GS_STB.Forms_Modules
             {
                 if (!ChecInt(e, DG))
                     return;
-
                 CheckLength(e, 3, DG); return;
             }
 
@@ -565,18 +557,15 @@ namespace GS_STB.Forms_Modules
                 
             }
         }
-
         void ChecDate(DataGridViewCellEventArgs e, DataGridView DG)
         {
-            DateTime k;
-            if (!DateTime.TryParse(_cell, out k))
+            if (!DateTime.TryParse(_cell, out DateTime k))
             { DG[e.ColumnIndex, e.RowIndex].Value = CellData; M("Не верный формат вводных данных, ввести разрешено только Дату"); return; }
         }
 
         bool ChecInt(DataGridViewCellEventArgs e, DataGridView DG)
         {
-            Int16 k;
-            if (!short.TryParse(_cell, out k))
+            if (!short.TryParse(_cell, out short k))
             { DG[e.ColumnIndex, e.RowIndex].Value = CellData; M("Не верный формат вводных данных, ввести разрешено только число"); return false; }
             return true;
         }
@@ -700,7 +689,7 @@ namespace GS_STB.Forms_Modules
                                    where fix.LotID == lotid
                                   select new 
                                   { 
-                                      ID = fix.id,LitIndex = fix.LitIndex, Мин_диапозон = fix.RGStart, Макс_диапозон = fix.RGEnd, ДатаЭтикетки = fix.LabDate,
+                                      ID = fix.id,LitIndex = fix.LitIndex, Мин_диапазон = fix.RGStart, Макс_диапазон = fix.RGEnd, ДатаЭтикетки = fix.LabDate,
                                       Кол_во_номеров = (fix.RGEnd - fix.RGStart) + 1
 
                                   }).ToList();
@@ -739,8 +728,8 @@ order by LOTID desc ");
             //    //                       Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
             //    //                       Used = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
             //    //                       LotID = Lot.LOTID,
-            //    //                       СтартДиапозон = Lot.RangeStart,
-            //    //                       КонецДиапозон = Lot.RangeEnd,
+            //    //                       Стартдиапазон = Lot.RangeStart,
+            //    //                       Конецдиапазон = Lot.RangeEnd,
             //    //                       FixedRG = Lot.FixedRG,
             //    //                       StartDate = Lot.StartDate
             //    //                   }).ToArray();

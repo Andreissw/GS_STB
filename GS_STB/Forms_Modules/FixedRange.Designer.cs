@@ -45,7 +45,7 @@
             this.LBText.Name = "LBText";
             this.LBText.Size = new System.Drawing.Size(1079, 105);
             this.LBText.TabIndex = 0;
-            this.LBText.Text = "В лоте присутствует разбивка серийных номеров на диапозоны, выберите нужный вам д" +
+            this.LBText.Text = "В лоте присутствует разбивка серийных номеров на диапазоны, выберите нужный вам д" +
     "иапозон";
             this.LBText.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
@@ -102,7 +102,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(296, 48);
             this.button3.TabIndex = 4;
-            this.button3.Text = "Без диапозона";
+            this.button3.Text = "Без диапазона";
             this.button3.UseVisualStyleBackColor = false;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 

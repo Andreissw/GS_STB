@@ -52,8 +52,8 @@ namespace GS_STB
                                Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
                                //Lot.LOTID,             
-                               СтартДиапозон = Lot.RangeStart,
-                               КонецДиапозон = Lot.RangeEnd,
+                               Стартдиапазон = Lot.RangeStart,
+                               Конецдиапазон = Lot.RangeEnd,
                                Lot.FixedRG,
                                Lot.StartDate
                            };

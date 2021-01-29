@@ -16,10 +16,10 @@ namespace GS_STB.Forms_Modules
     {
         int lotid;
         int LotCode;
-        string NotUsedLB = $"Лот еще не был использован, \n Укажите кол-во серийных номеров в диапозоне отгрузки и начальную дату";        
+        string NotUsedLB = $"Лот еще не был использован, \n Укажите кол-во серийных номеров в диапазоне отгрузки и начальную дату";        
         int count;
         string UsedLB = $"В лоте уже используется номера, \nукажите кол-во серийный номеров для начальной отгрузки Литера 0 и дату";
-        string UsedLB2 = $"В лоте уже используется номера, \n Укажите кол-во серийных номеров в диапозоне отгрузки и начальную дату";
+        string UsedLB2 = $"В лоте уже используется номера, \n Укажите кол-во серийных номеров в диапазоне отгрузки и начальную дату";
         bool UsedLot = false;
         int SNCount;
         string lot;
@@ -36,71 +36,60 @@ namespace GS_STB.Forms_Modules
             CheckLot(); //Проверяет выпускался ли лот, ставит флажок на булвой перемнной UsedLot (true/false)
             label1.Text = $"Лот - {GetLotName()}. Размер лота - {SNCount}.";
             DateRange.Value = DateTime.Now;
-            label1.Text = "Укажите кол-во серийных номеров в диапозоне отгрузки и начальную дату";
+            label1.Text = "Укажите кол-во серийных номеров в диапазоне отгрузки и начальную дату";
             if (!UsedLot) //Лот не использованный 
             {
-                //label1.Text += "\n" + NotUsedLB;
                 GRNotUsed.Visible = true; GRNotUsed.Location = new Point(17, 91);
             }
             else //Лот использованный 
-            {
-                //if (!Checkrange())
-                    //    label1.Text += "\n" + UsedLB;
-                    //else
-                    //    label1.Text += "\n" + UsedLB2;
-
-                    GRNotUsed.Visible = true; GRNotUsed.Location = new Point(17, 91); //Инициализация компонентов 
-            }
+            { GRNotUsed.Visible = true; GRNotUsed.Location = new Point(17, 91); }//Инициализация компонентов}
         }      
 
         private void button1_Click(object sender, EventArgs e)
         {
+            var EndRange = GetRangeEnd(); // Последний номер в лоте            
             //Присутствует 2  условия, если лот вообще не использован и если лот уже выпускается
             if (!UsedLot) //Лот не использованный
             {
-                int RangeStart = 0; // Создаю пустую переменную
-                var EndRange = GetRangeEnd(); // 
-                short literindex = 1; 
+                short literindex = 1;
                 DateTime d = DateRange.Value;
 
-                //Есть 2 условия, если диапозн создавался ранее и если не создавался
+                int RangeStart;
+                //Есть 2 условия, если диапазн создавался ранее и если не создавался
 
                 if (Checkrange()) //Создавался ранее
-                //Берем последние данные по диапозону, прибавляем + 1
-                { RangeStart = getrange() + 1; literindex = (short)(GetLiterIndex() + 1);  d = GetDatetime().AddDays(1); } 
+                //Берем последние данные по диапазону, прибавляем + 1
+                { RangeStart = getrange() + 1; literindex = (short)(GetLiterIndex() + 1);  /*d = GetDatetime().AddDays(1); */ }
                 else // Не создавался ранее
-                    RangeStart = GetRangeStart(); //Берем самый начальный номер в диапозоне
+                    RangeStart = GetRangeStart(); //Берем самый начальный номер в диапазоне
 
-                AddRangeMethod(RangeStart, EndRange, d,literindex); //Метод Добавление диапозона 
-
-               
+                AddRangeMethod(RangeStart, EndRange, d,literindex); //Метод Добавление диапазона                
             }
             else //Если лот уже выпускается
             {
-                var RangeEnd = GetRangeEnd();
-                if (!Checkrange())//Если ранее диапозоны не устанавливались
+                //var RangeEnd = GetRangeEnd();
+                if (!Checkrange())//Если ранее диапазоны не устанавливались
                 {                   
                     var Start = GetRangeEndUsed() + 1;
-                    AddRangeMethod(Start, RangeEnd, DateRange.Value, 1);
+                    AddRangeMethod(Start, EndRange, DateRange.Value, 1);
                 }
                 else
                 {
-                    var RangeStart = GetRangeTop(); //Определяем с какого номера создать диапозон
-                    var literindex = (short)(GetLiterIndex() + 1);
-                    var d = GetDatetime().AddDays(1);
-                    AddRangeMethod(RangeStart, RangeEnd, d, literindex);
-                } //Если диапозоны уже существуют
+                    var RangeStart = GetRangeTop(); //Определяем с какого номера создать диапазон
+                    var literindex = (short)(GetLiterIndex() + 1);                    
+                    AddRangeMethod(RangeStart, EndRange, DateRange.Value, literindex);
+                } //Если диапазоны уже существуют
 
                 #region СтарыйКод
                 //var RangeEnd = GetRangeEnd();
 
-                //if (!Checkrange()) //Если ранее диапозоны не устанавливались
+                //if (!Checkrange()) //Если ранее диапазоны не устанавливались
                 //{
                 //    var RangeStart = GetRangeStart();
                 //    DateTime d = DateRange.Value;
                 //    var count = GetCountSNUsed();
                 //    if (SNNum.Value > count)
-                //    { MessageBox.Show($"Кол-во номеров в диапозоне которое вы выбрали '{SNNum.Value}' меньше текущего количества использованных номеров в лоту {count}"); return; }
+                //    { MessageBox.Show($"Кол-во номеров в диапазоне которое вы выбрали '{SNNum.Value}' меньше текущего количества использованных номеров в лоту {count}"); return; }
 
                 //    AddRangeMethod(RangeStart, RangeEnd, d, 0);
                 //}
@@ -116,15 +105,13 @@ namespace GS_STB.Forms_Modules
 
             if (GridExcelReport.RowCount > 1) //Выгрузка Excel 
             {
-                OpenExcel(); 
-                MessageBox.Show("Диапозон добавлен успешно!");
+                OpenExcel();
+                MessageBox.Show("диапазон добавлен успешно!");
                 DialogResult = DialogResult.OK;
                 this.Close();
             }
-
-
         }
-            private void button2_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
         }
@@ -175,45 +162,153 @@ namespace GS_STB.Forms_Modules
 
         void AddRangeMethod(int RangeStart,int RangeEnd, DateTime d, short literindex)
         {
-            var Sum = (int)((RangeStart - 1) + SNNum.Value); // Берем стартовое значение и прибавляем к нему значение которое ввели в поле
-            //Если результат больше конечного диапозона, ошибка
-            if (Sum > RangeEnd)
+            //var Sum = (int)((RangeStart - 1) + SNNum.Value); // Берем стартовое значение и прибавляем к нему значение которое ввели в поле
+            var Sum = SerialNumbersCount();
+            //Если результат больше конечного диапазона, ошибка
+            if (SNNum.Value > Sum)
             {
-                MessageBox.Show($"Кол-во номеров в диапозоне которое вы выбрали '{SNNum.Value}'превышает диапозон в лоте, в диапозоне осталось '{RangeEnd - RangeStart + 1}'"); return;
+                MessageBox.Show($"Кол-во номеров в диапазоне которое вы выбрали '{SNNum.Value}'превышает диапазон в лоте, в диапазоне осталось '{RemainSerialNumbersCount(RangeStart)}'"); return;
             }
-
-            //Проверка, есть ли диапозон с указанной датой
+            //Проверка, есть ли диапазон с указанной датой
             if (CheckDateRange())
             {
-                MessageBox.Show($"Уже существует лот '{lot}', который работал в диапозоне с такой датой '{DateRange.Value.ToString("dd.MM.yyyy")}'"); return;
+                MessageBox.Show($"Уже существует лот '{lot}', который работал в диапазоне с такой датой '{DateRange.Value.ToString("dd.MM.yyyy")}'"); return;
             }
 
+            if (CheckRangeInLot()) //Если серийные номера в лоте идут последовательно друг за другом
+            {
+                SequentialRange(RangeStart, RangeEnd, d, literindex); //Применяется, если в лоте нет разрыва серийных номер и они последовательно идут друг за другом
+                return;
+            }
+            BreakedRange(RangeStart, RangeEnd, d, literindex); //Если в лоте Серийные номера идут не последовательно друг за другом
+
+        }
+
+        bool CheckRangeInLot()
+        {
+            loadgrid.Loadgrid(BreakRangedGrid, @$"use fas SELECT MIN([SerialNumber]) AS start_range , MAX([SerialNumber]) AS end_range
+                                                ,count(grp) as Count_range FROM(SELECT[SerialNumber],[SerialNumber] - ROW_NUMBER() OVER(ORDER BY SerialNumber) AS grp
+                                                FROM dbo.[FAS_SerialNumbers] where LOTID = {lotid}) AS D  GROUP BY grp order by start_range");
+            if (BreakRangedGrid.RowCount == 1)
+                return true; //Диапозон ровный
+            return false; //диапозон не по порядку
+        }
+
+        void BreakedRange(int RangeStart, int RangeEnd, DateTime d, short literindex)
+        {
+            for (int i = 0; i < BreakRangedGrid.RowCount; i++)
+            {
+                var EndBreakRange = int.Parse(BreakRangedGrid[1, i].Value.ToString()); //Конечный обрывок диапозона
+
+                if (RangeStart <= EndBreakRange) //Если серийный номер Меньше конечного текущего обрывистого диапозона
+                {
+                    var Sum = (int)((RangeStart - 1) + SNNum.Value); //RangeStart + Кол-во серийных номеров, которые мы установили
+
+                    if (Sum > EndBreakRange)//Если количество Сер номеров перепрыгивает диапозон 
+                    {
+                        //Если  самый последний номер в Лоте равен последнему номеру в обрывистом диапозоне и если сумма превышает самый последний номер в лоте
+                        if (RangeEnd == EndBreakRange)
+                        {
+                            MessageBox.Show($"Количество серийных номеров, которое вы указали превышает максимальный диапозон"); return;
+                        }
+
+                        var Itter = GetItter(i); //Количество иттерация на добавление диапозона
+                        var CountSerNumber = SNNum.Value; //Записываем в переменную, кол-во серийных номеров для добавления
+
+                        var r = EndBreakRange - RangeStart + 1; //Узнаем количество номеров
+                        CountSerNumber -= r;
+
+                        AddRange(RangeStart, RangeEnd,ref d, literindex, r);
+
+                        for (int b = 0; b < Itter - 1; b++)
+                        {
+                            var StarR = int.Parse(BreakRangedGrid[0, i + (b + 1)].Value.ToString());
+                            var EndR = int.Parse(BreakRangedGrid[1, i + (b+1)].Value.ToString());
+                            var Result = CountSerNumber + StarR - 1;
+
+                            if (Result >= EndR) //Если остаток снова перепрыгивает конец текущего диапозона
+                            {
+                                var Re = EndR - StarR;
+                                CountSerNumber -= Re;
+                                AddRange(StarR, RangeEnd, ref d, literindex, Re);
+                                continue;
+                            }
+
+                            AddRange(StarR, RangeEnd, ref d, literindex, CountSerNumber);
+                        }
+                        return;
+                    }
+                    else //Количество номеров не перепрыгивает диапозон
+                    {
+                        AddRange(RangeStart, RangeEnd,ref d, literindex,SNNum.Value); //Добавление диапозона
+                        return;
+                    }                    
+                }
+            }
+        }
+
+        int RemainSerialNumbersCount(int serialNumber)
+        {
+            using (var fas = new FASEntities())
+            {
+                return fas.FAS_SerialNumbers.Where(c => c.LOTID == lotid & c.SerialNumber >= serialNumber & c.FixedID == null & c.IsUsed == false).Count();
+            }
+        }
+        int SerialNumbersCount()
+        {
+            using (var fas = new FASEntities())
+            {
+                return fas.FAS_SerialNumbers.Where(c => c.LOTID == lotid).Count();
+            }
+        }
+
+        int GetItter(int i)
+        {
+            var count = 0;
+            for (int k = i; k < BreakRangedGrid.RowCount; k++)            
+                count++;
+            return count;
+        }
+
+        void SequentialRange(int RangeStart, int RangeEnd, DateTime d, short literindex)
+        {
+            var Sum = (int)((RangeStart - 1) + SNNum.Value); // Берем стартовое значение и прибавляем к нему значение которое ввели в поле
+            //Если результат больше конечного диапазона, ошибка
+            if (Sum > RangeEnd)
+            {
+                MessageBox.Show($"Кол-во номеров в диапазоне которое вы выбрали '{SNNum.Value}'превышает диапазон в лоте, в диапазоне осталось '{RangeEnd - RangeStart + 1}'"); return;
+            }
+            AddRange( RangeStart, RangeEnd, ref d, literindex , SNNum.Value);
+        }
+
+        void AddRange( int RangeStart, int RangeEnd, ref DateTime d, short literindex,decimal Value)
+        {
             //Существует 2 условия, Если значение которое мы указали равно или меньше 15000 шт. И если больше 15000 шт.
 
-            if (SNNum.Value <= 15000) //Равно или меньше 15000 шт.
+            if (Value <= 15000) //Равно или меньше 15000 шт.
             {
-                RangeActivate(RangeStart, RangeEnd); //Активируем диапозон в таблице GsLots   
-                addFixedRange(literindex, RangeStart, (int)(RangeStart + SNNum.Value) - 1, d); //Добавляет диапозон в таблицу FAS_Fixed_Range
+                RangeActivate(RangeStart, RangeEnd); //Активируем диапазон в таблице GsLots   
+                addFixedRange(literindex, RangeStart, (int)(RangeStart + Value) - 1, d); //Добавляет диапазон в таблицу FAS_Fixed_Range
             }
             else //Если больше 15000 шт.
             {
-                RangeActivate(RangeStart, RangeEnd); //Активируем диапозон в таблице GsLots  
+                RangeActivate(RangeStart, RangeEnd); //Активируем диапазон в таблице GsLots  
 
-                int C = (int)(SNNum.Value / 15000);
-                for (int i = 0; i < C; i++) //Делим на диапозоны по датам
+                int C = (int)(Value / 15000);
+                for (int i = 0; i < C; i++) //Делим на диапазоны по датам
                 {
                     addFixedRange(literindex, RangeStart, RangeStart + (15000 - 1), d);
                     RangeStart = getrange() + 1; d = d.AddDays(1);
                 }
 
                 //добавляем отстаток
-                var r = (int)(SNNum.Value - (15000 * C));
+                var r = (int)(Value - (15000 * C));
                 if (r > 0)
                 {
                     addFixedRange(literindex, RangeStart, RangeStart + (r - 1), d);
                 }
             }
-        }
+        }     
 
         DateTime GetDatetime()
         {
@@ -280,19 +375,18 @@ namespace GS_STB.Forms_Modules
                 var Re = (from Fi in fas.FAS_Fixed_RG
                           where Fi.LotID == lotid
                           select Fi.RGEnd).Max();
+                
 
-                if (R != null)//Если номер в диапозоне                                  
-                    return Re + 1;
+                if (R != null)//Если номер в диапазоне                                  
+                    return fas.FAS_SerialNumbers.Where(c => c.SerialNumber > Re & c.LOTID == lotid).Select(c=>c.SerialNumber).Take(1).FirstOrDefault();
 
-                if (sers <= Re) //Если перед нашим максимально найденным номером, есть диапозон
-                    return Re + 1;
-                else //Если перед номером нет диапозонов
-                    return sers + 1;
+                if (sers <= Re) //Если перед нашим максимально найденным номером, есть диапазон
+                    return fas.FAS_SerialNumbers.Where(c => c.SerialNumber > Re & c.LOTID == lotid).Select(c => c.SerialNumber).Take(1).FirstOrDefault();
+                else //Если перед номером нет диапазонов
+                    return fas.FAS_SerialNumbers.Where(c => c.SerialNumber > sers & c.LOTID == lotid).Select(c => c.SerialNumber).Take(1).FirstOrDefault();
 
             }
         }
-
-
 
         bool Checkrange()
         {
@@ -306,6 +400,7 @@ namespace GS_STB.Forms_Modules
             using (var fas = new FASEntities())
             {
                 return fas.FAS_Fixed_RG.Where(c => c.LotID == lotid).OrderByDescending(c => c.id).Select(c => c.RGEnd).FirstOrDefault();
+                //fas.FAS_SerialNumbers.Where(c => c.LOTID == lotid & c.FixedID == null).Select(c => c.SerialNumber).Take(1).FirstOrDefault();
             }
         }
 
@@ -322,14 +417,14 @@ namespace GS_STB.Forms_Modules
             var Date = DateTime.Parse(d.ToString("dd.MM.yyyy"));
             using (var fas = new FASEntities())
             {
-                var F = new FAS_Fixed_RG() //Добавляем диапозон в FixedRange
+                var F = new FAS_Fixed_RG() //Добавляем диапазон в FixedRange
                 {
                     LotID = lotid,
                     LitIndex = liter,
                     RGStart = st,
                     RGEnd = end,
                     LabDate = Date
-                };
+                };                
                 
                 fas.FAS_Fixed_RG.Add(F);
                 fas.SaveChanges(); //Сохраняем
@@ -337,16 +432,22 @@ namespace GS_STB.Forms_Modules
                 //Берем ID записи, которую мы сохранили
                 var FixedID = fas.FAS_Fixed_RG.Where(c => c.LotID == lotid).OrderByDescending(c => c.id).Select(c => c.id).FirstOrDefault();
 
-                //Присваиваем ID  в FAS_serialNumbers всем номерам которые попадают в диапозон
-                var Fas_ser = fas.FAS_SerialNumbers.Where(c => c.LOTID == lotid & c.SerialNumber >= st & c.SerialNumber <= end).AsEnumerable()
-                    .Select(c => { c.FixedID = FixedID; return c; });
+                #region Медленный Update
+                ////Присваиваем ID  в FAS_serialNumbers всем номерам которые попадают в диапазон
+                //var Fas_ser = fas.FAS_SerialNumbers.Where(c => c.LOTID == lotid & c.SerialNumber >= st & c.SerialNumber <= end).AsEnumerable()
+                //    .Select(c => { c.FixedID = FixedID; return c; });
 
-                foreach (FAS_SerialNumbers item in Fas_ser)
-                    fas.Entry(item).State = (System.Data.Entity.EntityState)EntityState.Modified;
+
+                //foreach (FAS_SerialNumbers item in Fas_ser)
+                //    fas.Entry(item).State = (System.Data.Entity.EntityState)EntityState.Modified;
+                //fas.SaveChanges();
+
+                #endregion
+
+                var obj = fas.FAS_SerialNumbers.Where(c => c.LOTID == lotid & c.SerialNumber >= st & c.SerialNumber <= end).ToList();
+
+                obj.ForEach(c => c.FixedID = FixedID);
                 fas.SaveChanges();
-
-
-
                 ReportExcel(st,end,Date);
             }
         }
@@ -390,8 +491,7 @@ namespace GS_STB.Forms_Modules
         }
 
         string GenerateFullSTBSN(int serialnumber,string ProdDate) //Генерация Полного Серийного номера
-        {
-        
+        {        
                 string FullSTBSN;
                 int _serNumber = serialnumber;               
                 var FullSTBSN_Arr = "0" + ProdDate + "01" + LotCode + _serNumber;

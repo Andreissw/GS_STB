@@ -82,8 +82,7 @@ namespace GS_STB.Class_Modules
             FUG.Location = new Point(179, 11);
             FUG.Size = new Size(536, 209);
 
-            GetDataPac();
-
+            GetDataPac();            
             #region
             //if (!CheckCounter()) //Проверка на первый запуск по лоту и линии
             //{ AddPacCounter(); Arraylpac = GetpackingCounter(); BoxNum.Text = "1"; PalletNum.Text = "1"; NextBoxNum.Text = (int.Parse(BoxNum.Text) + 1).ToString(); }
@@ -131,12 +130,11 @@ namespace GS_STB.Class_Modules
             { LabelStatus(Controllabel, "Не верный номер", Color.Red); Grid.BackgroundColor = Color.Red; return; }
             FullSTBSN = TB.Text;
 
-            int k = 0;
-            if (!int.TryParse(TB.Text.Substring(15), out k))
+            if (!int.TryParse(TB.Text.Substring(15), out int k))
             { LabelStatus(Controllabel, $"Неверный формат номера {TB.Text}", Color.Red); return; }
             ShortSN = int.Parse(TB.Text.Substring(15)); //Если удачно, то преобразуем ShortSN
 
-            if (CheckMethods()) //Проверка Сер. Ном. в таблицах и проверка диапозона
+            if (CheckMethods()) //Проверка Сер. Ном. в таблицах и проверка диапазона
             { Grid.BackgroundColor = Color.Red;  return; }
 
             //Проверерка флажков
@@ -145,13 +143,6 @@ namespace GS_STB.Class_Modules
 
             WriteToDB();
             return;
-
-            //if (Grid.RowCount < int.Parse(ArrayList[7].ToString()))
-            //    UnitCounter(control,Grid,TB);
-            //else if (Grid.RowCount == int.Parse(ArrayList[7].ToString()))
-            //    BoxAndPalletCounter(control,Grid,TB);            
-
-            //LabelStatus(Controllabel, $"{TB.Text} Номер успешно добавлен", Color.Green);
         }
         void SetSerialNumber()
         {
@@ -173,7 +164,6 @@ namespace GS_STB.Class_Modules
                 fas.SaveChanges();
             }
         }
-
         void AddPackingGS()
         {
             using (var fas = new FASEntities())
@@ -199,7 +189,6 @@ namespace GS_STB.Class_Modules
             var Grid = (DataGridView)control.Controls.Find("DG_LOTList", true).FirstOrDefault();
             GetLot(Grid);
         }
-
         void WriteToDB()
         {   // pac.PalletCounter[0], pac.BoxCounter[1], pac.UnitCounter[2]
             Label LBPN = control.Controls.Find("PalletNum", true).OfType<Label>().FirstOrDefault();
@@ -241,8 +230,8 @@ namespace GS_STB.Class_Modules
             ControllabelFASEND.Text = "";
         }
 
-        //NoInLot = Не найден номер в лоте(Работа без диапозона)
-        //NoInRange = Не найден свободный номер в лоте (Работа без диапозона) 
+        //NoInLot = Не найден номер в лоте(Работа без диапазона)
+        //NoInRange = Не найден свободный номер в лоте (Работа без диапазона) 
         bool CheckRange()
         {
             Link: var R = GetlabelDate();
@@ -253,22 +242,21 @@ namespace GS_STB.Class_Modules
             if (R == "NoInRange")
             { LabelStatus(ControllabelFASEND, $"{FullSTBSN} Не найден свободный номер", Color.Red); return false; }
 
-            //===============================Работа с диапозоном ниже
+            //===============================Работа с диапазоном ниже
             if (R == "NotRangeLot")            
-            { LabelStatus(ControllabelFASEND, $"{FullSTBSN} Нет в диапозоне лота \n от {StartRangeLot} до {EndRangeLot}", Color.Red); return false; }
+            { LabelStatus(ControllabelFASEND, $"{FullSTBSN} Нет в диапазоне лота \n от {StartRangeLot} до {EndRangeLot}", Color.Red); return false; }
 
             if (R == "Abort")
-            { LabelStatus(ControllabelFASEND, $"Закончились серийные номера готовые к упаковке в диапозоне Лота!", Color.Red); return false; }
+            { LabelStatus(ControllabelFASEND, $"Закончились серийные номера готовые к упаковке в диапазоне Лота!", Color.Red); return false; }
 
             if (R == "NotRange")
             { LabelStatus(ControllabelFASEND, $"{FullSTBSN} Номер не соответсвует текущему индексу литеры \n{ArrayList[6]} от {StartRange} до {EndRange} ", Color.Red); return false; }
 
-            if (R == "New") //Открывается новый диапозон, возвращаемся к 198 строке в метод GetlabelDate()     
+            if (R == "New") //Открывается новый диапазон, возвращаемся к 198 строке в метод GetlabelDate()     
             {
                 GetDataPac();
                 goto Link;            
             }
-
             return true;
         }
 
@@ -319,10 +307,7 @@ namespace GS_STB.Class_Modules
             Grid.Rows.Add(1, TB.Text, Liter, BoxNum.Text, PalletNum.Text, DateTime.UtcNow.AddHours(2));
 
             if(( int.Parse(BoxNum.Text) % int.Parse(ArrayList[8].ToString())) == 1)          
-                PalletNum.Text = (int.Parse(PalletNum.Text) + 1).ToString();
-         
-
-
+                PalletNum.Text = (int.Parse(PalletNum.Text) + 1).ToString();  
         }
         void UnitCounter(Control control,DataGridView Grid, TextBox TB)
         {
@@ -336,7 +321,6 @@ namespace GS_STB.Class_Modules
                 Grid.BackgroundColor = Color.Green;
             else
                 Grid.BackgroundColor = Color.Gold;
-
         }
         ArrayList GetSerialNum(int shortSN)
         {
@@ -352,7 +336,6 @@ namespace GS_STB.Class_Modules
                 foreach (var value in report)
                     ArrayList.Add(value);
                 return ArrayList;
-
             }
         }
 
@@ -374,7 +357,6 @@ namespace GS_STB.Class_Modules
                 foreach (var value in report)
                     ArrayList.Add(value);
                 return ArrayList;
-
             }
         }
 
@@ -409,7 +391,7 @@ namespace GS_STB.Class_Modules
             LabelStatus(Controllabel, "Произошла ошибка с проверкой SerialNumbers - обратитесь к Технологу", Color.Red);
             return true;
         }
-        List<bool> CheckTableData(int ShortSN) //Старая проверка, которую я убрал из логики
+        List<bool> CheckTableData(int ShortSN) //Проверка флажков
         {
             using (var FAS = new FASEntities())
             {
@@ -423,18 +405,9 @@ namespace GS_STB.Class_Modules
                             {
                                ST = !ST.SerialNumber.Equals(null),
                                UP = !UP.SerialNumber.Equals(null),
-                               Pac = !Pac.SerialNumber.Equals(null),
-                               //User = !FAS.FAS_Users.Where(c=>c.UserID == Pac.PackingByID).Select(c=>c.UserName).FirstOrDefault().Equals(null),
-                               //Liter = !FAS.FAS_Liter.Where(c=>c.ID == Pac.LiterID).Select(c => c.LiterName).FirstOrDefault().Equals(null),
-                               //Pallet = !Pac.PalletNum.Equals(null),
-                               //BoxNum = !Pac.BoxNum.Equals(null),
-                               //Unitnum = !Pac.UnitNum.Equals(null),
-                               //Date = !Pac.PackingDate.Equals(null)                               
+                               Pac = !Pac.SerialNumber.Equals(null),                                                           
                             });
-
-                //if (list.Count() == 0)
-                //    return ArrayList;
-
+              
                 var report = list.First().GetType().GetProperties().Select(c => c.GetValue(list.First()));
                 foreach (var value in report.OfType<bool>())
                     List.Add(value);
@@ -486,10 +459,8 @@ namespace GS_STB.Class_Modules
                     foreach (var item in list)
                     {
                         ArrayList.Add(item.PalletCounter); ArrayList.Add(item.BoxCounter); ArrayList.Add(item.UnitCounter); break;
-                    }   
-                
+                    }                   
                 return ArrayList;
-
             }
         }
 
@@ -531,6 +502,7 @@ from FAS_GS_LOTs as gs
 left join FAS_Models as m on gs.ModelID = m.ModelID
 where IsActive = 1
 order by LOTID desc ");
+            #region Старый код
             //using (FASEntities FAS = new FASEntities())
             //{
             //    var list = from Lot in FAS.FAS_GS_LOTs
@@ -548,8 +520,8 @@ order by LOTID desc ");
             //                   InLot = (from s in FAS.FAS_SerialNumbers where s.LOTID == Lot.LOTID select s.LOTID).Count(),
             //                   Ready = (from s in FAS.FAS_SerialNumbers where s.IsUsed == false & s.IsActive == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
             //                   User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
-            //                   СтартДиапозон = Lot.RangeStart,
-            //                   КонецДиапозон = Lot.RangeEnd,
+            //                   Стартдиапазон = Lot.RangeStart,
+            //                   Конецдиапазон = Lot.RangeEnd,
             //                   Lot.FixedRG,
             //                   Lot.StartDate
 
@@ -558,38 +530,39 @@ order by LOTID desc ");
             //    Grid.DataSource = list.ToList();
 
             //}
+            #endregion
         }
 
         string GetlabelDate()
         {
             SerNumber = 0;
-            if (DateFas_Start) // Работа по диапозону
+            if (DateFas_Start) // Работа по диапазону
             {
-                //NotRangeLot = Не попал в общий диапозон лота
-                //NotRange = Не попал в диапозон Литера
-                //Abort = Закончились серийные номера во всех диапозонах
+                //NotRangeLot = Не попал в общий диапазон лота
+                //NotRange = Не попал в диапазон Литера
+                //Abort = Закончились серийные номера во всех диапазонах
                 //False = Прошло успешно!           
-                //New = Открывается новый диапозон
-                //NoInLot = Не найден номер в лоте(Работа без диапозона)
-                //NoInRange = Не найден свободный номер в лоте (Работа без диапозона) 
+                //New = Открывается новый диапазон
+                //NoInLot = Не найден номер в лоте(Работа без диапазона)
+                //NoInRange = Не найден свободный номер в лоте (Работа без диапазона) 
 
                 var Result = GetSerialNumberRange();
 
-                if (Result == "NotRangeLot") //Не попал в общий диапозон лота
+                if (Result == "NotRangeLot") //Не попал в общий диапазон лота
                     return "NotRangeLot";
 
                 if (Result == "Abort")
-                    return "Abort"; //Закончились серийные номера во всех диапозонах  
+                    return "Abort"; //Закончились серийные номера во всех диапазонах  
 
-                if (Result == "NotRange") //Не попал в диапозон Литера
+                if (Result == "NotRange") //Не попал в диапазон Литера
                     return "NotRange";         
 
-               if (Result == "New") //Если открывается новый диапозон
+               if (Result == "New") //Если открывается новый диапазон
                    return "New";
 
                 return "False"; //Все успешно
             }
-            else //Работа не по диапозону 
+            else //Работа не по диапазону 
             {
                 var Result = GetSerialNumberNotRange();
 
@@ -601,22 +574,20 @@ order by LOTID desc ");
                 return "False";
             }
         }
-
         string GetSerialNumberNotRange()
         {            
             using (FASEntities FAS = new FASEntities())
             {
+                //Сначала проверяем номер в лоте
                 var R = FAS.FAS_SerialNumbers.Where(C => C.SerialNumber == ShortSN & C.LOTID == LOTID & C.IsUsed == true & C.IsActive == true).Select(C => C.SerialNumber == C.SerialNumber).FirstOrDefault();
                 if (!R)                
                     return "NoInLot";
 
+                //Потом проверяем в этом лоте, чтобы номер был без диапазонным
                 var Re = FAS.FAS_SerialNumbers.Where(C => C.SerialNumber == ShortSN & C.LOTID == LOTID & C.FixedID == null & C.IsUsed == true & C.IsActive == true).Select(C => C.SerialNumber == C.SerialNumber).FirstOrDefault();
                 if (!Re)
                     return "NoInRange";
-
-                return "False";
-                
-
+                return "False";     
             }
         }
 
@@ -624,37 +595,37 @@ order by LOTID desc ");
         {
             bool result = false;
             var GridInfo = (DataGridView)control.Controls.Find("GridInfo", true).FirstOrDefault();
-            for (int i = StartRangeLot; i <= EndRangeLot; i++) //Проверка общего диапозона 
+            for (int i = StartRangeLot; i <= EndRangeLot; i++) //Проверка общего диапазона 
                 if (i == ShortSN)
                 { result = true; break; }
 
-            if (!result) //Не попал в общий диапозон
+            if (!result) //Не попал в общий диапазон
                 return "NotRangeLot";
             
             using (FASEntities FAS = new FASEntities())
             {
-                     var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапозоне Лота, которые готовы к упаковке
+                     var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапазоне Лота, которые готовы к упаковке
                     .Where(c => c.IsUsed == true && c.IsActive == true && c.IsUploaded == true && c.IsWeighted == true && c.IsPacked == false
                     && c.SerialNumber >= StartRangeLot && c.SerialNumber <= EndRangeLot).Count();
 
-                if (R == 0) //Закончились номера в диапозоне лота для упаковки                
+                if (R == 0) //Закончились номера в диапазоне лота для упаковки                
                     return "Abort";                
             };
 
             result = false;
-            for (int i = StartRange; i <= EndRange; i++) //Проверка диапозона Литера
+            for (int i = StartRange; i <= EndRange; i++) //Проверка диапазона Литера
                 if (i == ShortSN)
                 { result = true; break; }
 
             using (FASEntities FAS = new FASEntities())
             {
-                var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапозоне литера, которые готовы к упаковке
+                var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапазоне литера, которые готовы к упаковке
                     .Where(c => c.IsUsed == true && c.IsActive == true && c.IsUploaded == true && c.IsWeighted == true && c.IsPacked == false
                     && c.SerialNumber >= StartRange && c.SerialNumber <= EndRange).Count();
 
-                if (R == 0) //Закончились номера в диапозоне Литера
+                if (R == 0) //Закончились номера в диапазоне Литера
                 {
-                    FixedRange FR = new FixedRange(LOTID, this, "В базе для этого диапозона закончились серийные номера \n выберите следующий или вызовите технолога", LitIndex);
+                    FixedRange FR = new FixedRange(LOTID, this, "В базе для этого диапазона закончились серийные номера \n выберите следующий или вызовите технолога", LitIndex);
                     var Result = FR.ShowDialog();
 
                     if (Result == DialogResult.OK)
@@ -666,7 +637,7 @@ order by LOTID desc ");
                 }
             };
 
-            if (!result) //Не попал в Литер диапозон
+            if (!result) //Не попал в Литер диапазон
                 return "NotRange";
 
             return "False";
@@ -676,8 +647,8 @@ order by LOTID desc ");
             //{                
             //    for (int i = 0; i < GridRange.RowCount; i++)
             //    {
-            //        var st = int.Parse(GridRange[0, i].Value.ToString()); //Берем начало диапозона
-            //        var end = int.Parse(GridRange[1, i].Value.ToString()); //Берем конец диапозона
+            //        var st = int.Parse(GridRange[0, i].Value.ToString()); //Берем начало диапазона
+            //        var end = int.Parse(GridRange[1, i].Value.ToString()); //Берем конец диапазона
 
             //        //Запрос по дипозону, лоту used 0, active 1
             //        var ser = FAS.FAS_SerialNumbers.Where
@@ -685,12 +656,12 @@ order by LOTID desc ");
             //        && c.SerialNumber >= st && c.SerialNumber <= end && c.SerialNumber == ShortSN)
             //        .Select(c => c.SerialNumber).FirstOrDefault();
 
-            //        if (ser == ShortSN) //Если номер в диапозоне найден, сохраняем данные, успешно выходим из метода          
+            //        if (ser == ShortSN) //Если номер в диапазоне найден, сохраняем данные, успешно выходим из метода          
             //            return "False";                   
             //    }
             //}
 
-            //FixedRange FR = new FixedRange(LOTID, this, "В базе для этого диапозона закончились серийные номера \n выберите следующий или вызовите технолога", LitIndex);
+            //FixedRange FR = new FixedRange(LOTID, this, "В базе для этого диапазона закончились серийные номера \n выберите следующий или вызовите технолога", LitIndex);
             //var Result = FR.ShowDialog();
 
             //if (Result == DialogResult.Abort)

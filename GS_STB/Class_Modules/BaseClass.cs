@@ -34,10 +34,8 @@ namespace GS_STB.Class_Modules
         public int LotCode { get; set; }
         public int PCBID { get; set; }
         public string LineForPrint { get; set; }
-
         public short LitIndex { get; set; }
         public int StartRangeLot { get; set; }
-
         public int EndRangeLot { get; set; }
         public int StartRange { get; set; }
         public int EndRange { get; set; }
@@ -55,21 +53,13 @@ namespace GS_STB.Class_Modules
         public int UpPrintCountSN { get; set; }
         public int UpPrintCountID { get; set; }
         public string COMPORT { get; set; }
-
         //public int Delay { get; set; } = 200;
-
         public bool CheckGetSN { get; set; } = false;
-
         public CancellationTokenSource cts { get; set; }
-
         public CancellationToken token { get; set; }
-
         public abstract void KeyDownMethod();
-
         public abstract void GetComponentClass();
-
         public abstract void LoadWorkForm();
-
         public void LabelStatus(Label label, string TEXT, Color color)
         {
             control.Invoke((Action)(() =>
@@ -94,7 +84,6 @@ namespace GS_STB.Class_Modules
 
         public void CreatePathPrinter()
         {
-
             Directory.CreateDirectory(@"C:\PrinterSettings");
             foreach (var item in PrintSetpath)
             {
@@ -154,16 +143,6 @@ namespace GS_STB.Class_Modules
             X = X.Substring(X.IndexOf(',') + 1, X.IndexOf('.') - X.IndexOf(',') - 1);
             return X;
         }
-
-        //public void GetLineForPrint(int lineID)
-        //{
-        //    using (FASEntities FAS = new FASEntities())
-        //    {
-        //        LineForPrint = FAS.FAS_Lines.Where(c => c.LineID == lineID).Select(c => c.Print_Line).FirstOrDefault();
-        //    }
-        //}
-
-
         public void ShiftCounterUpdate()
         {
             using (FASEntities FAS = new FASEntities())
@@ -177,7 +156,7 @@ namespace GS_STB.Class_Modules
             }
 
         }
-
+        
         public void LotCounterUpdate()
         {
             using (FASEntities FAS = new FASEntities())
@@ -190,7 +169,6 @@ namespace GS_STB.Class_Modules
             }
 
         }
-
         public void ShiftCounterStart()
         {           
             var datenow = DateTime.UtcNow.AddHours(2);
@@ -230,7 +208,6 @@ namespace GS_STB.Class_Modules
 
                     foreach (var item in lists)
                     { ShiftCounterID = item.ID; ShiftCounter = item.ShiftCounter; LotCounter = (int)item.LOT_Counter; break; }
-
                 }
             }
 
@@ -267,8 +244,6 @@ namespace GS_STB.Class_Modules
             else
                 return 4;
         }
-
-
         public void WriteToDBDesis(int serial,string FullSerial,int error)
         {
             using (var FAS = new FASEntities())
@@ -288,7 +263,6 @@ namespace GS_STB.Class_Modules
                 FAS.SaveChanges();
             }
         }
-
         public void UpdateToDBDesis(int serial)
         {
             using (var FAS = new FASEntities())
@@ -301,7 +275,6 @@ namespace GS_STB.Class_Modules
 
             }
         }
-
         public void DeleteToDBDesis(int serial)
         {
             using (var FAS = new FASEntities())
@@ -311,7 +284,6 @@ namespace GS_STB.Class_Modules
                 FAS.SaveChanges();
             }
         }
-
         public void DeleteToDBWeight(int serial)
         {
             using (var FAS = new FASEntities())
@@ -324,7 +296,6 @@ namespace GS_STB.Class_Modules
                 FAS.SaveChanges();
             }
         }
-
         public void DeleteToUpload(int serial)
         {
             using (var FAS = new FASEntities())
@@ -338,7 +309,6 @@ namespace GS_STB.Class_Modules
 
             }
         }
-
         public void AddLogDesis(int serial,int appid,long smartcardID, string fullstbsn,string CASID)
         {
             using (var FAS = new FASEntities())
@@ -361,9 +331,7 @@ namespace GS_STB.Class_Modules
                 FAS.FAS_OperationLog.Add(op);
                 FAS.SaveChanges();
             }
-
         }
-
         public void AddToOperLogFasStart(string FullSTBSN)
         {
             using (FASEntities FAS = new FASEntities())
@@ -446,7 +414,6 @@ namespace GS_STB.Class_Modules
 
             }
         }
-
        public string CheckLazer(int pcbid)
         {
             using (var smd = new SMDCOMPONETSEntities())
@@ -462,7 +429,5 @@ namespace GS_STB.Class_Modules
                 return _fas.FAS_Start.Where(c => c.FullSTBSN == SN).Select(c => c.ManufDate).FirstOrDefault();
             }
         }
-
-
     }
 }

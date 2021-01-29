@@ -39,7 +39,9 @@ namespace GS_STB.Class_Modules
             //var LengthCheck = control.Controls.Find("LengthCheck", true).FirstOrDefault().Visible = true ;
             var FUG = control.Controls.Find("FAS_Print", true).FirstOrDefault();
             var SNPrint = control.Controls.Find("SNPRINT", true).FirstOrDefault();
-            var CHPrintSN = control.Controls.Find("CHPrintSN", true).OfType<CheckBox>().FirstOrDefault();            
+            var CHPrintSN = control.Controls.Find("CHPrintSN", true).OfType<CheckBox>().FirstOrDefault();
+            var PrintCheckSN = control.Controls.Find("PrintCheckSN", true).OfType<CheckBox>().FirstOrDefault(); //Перепечатка серийного номера по серийному номеру
+            PrintCheckSN.Visible = true;
             var CountLBSN = control.Controls.Find("CountLBSN", true).OfType<Label>().FirstOrDefault();
             //var CHPrintID = control.Controls.Find("CHPrintID", true).OfType<CheckBox>().FirstOrDefault().Visible = false;
             //var CountLBID = control.Controls.Find("CountLBID", true).OfType<Label>().FirstOrDefault().Visible = false;
@@ -57,7 +59,7 @@ namespace GS_STB.Class_Modules
             if (DateFas_Start)
             {
                 Fas_StartRange.Visible = true;
-                Fas_StartRange.Text = $"Диапозон: Start {StartRange}, End {EndRange} \n Литер {LitIndex}";
+                Fas_StartRange.Text = $"диапазон: Start {StartRange}, End {EndRange} \n Литер {LitIndex}";
             }
             else         
                 Fas_StartRange.Visible = false;
@@ -89,84 +91,106 @@ namespace GS_STB.Class_Modules
             LB_LOTCounter.Text = LotCounter.ToString();
         }
 
+       
         public override void KeyDownMethod()
         {
-            
             var LengthCheck = control.Controls.Find("LengthCheck", true).OfType<CheckBox>().FirstOrDefault();
             TextBox TB = control.Controls.Find("SerialTextBox", true).OfType<TextBox>().FirstOrDefault();
             Label Controllabel = control.Controls.Find("Controllabel", true).OfType<Label>().FirstOrDefault();
+            var PrintCheckSN = control.Controls.Find("PrintCheckSN", true).OfType<CheckBox>().FirstOrDefault(); //Перепечатка серийного номера по серийному номеру
+
+            if (PrintCheckSN.Checked)                     
+                if (TB.TextLength == 23)
+                {
+                    var Result = CheckSerialNumber(TB.Text);
+                    if (Result == TB.Text)
+                    {
+                        Print(TB.Text, TB.Text, Controllabel); return;
+                    }
+                    else
+                    {LabelStatus(Controllabel, $"{Result}", Color.Red); return;}
+                }
+                else               
+                {LabelStatus(Controllabel, $"{"Не верный формат номера, включён флажок 'Печать дубликата серийного номера'! \n по серийному номеру"}", Color.Red); return; }              
+
+          
+            if (LengthCheck.Checked) //Галочка проверки на 21 символ (Когда на SMT косячат с длиной баркода)
+                if (TB.TextLength != 21) //Проверка на длину в 21 символ
+                { LabelStatus(Controllabel, $"{TB.Text} не верный формат номера", Color.Red); return; } //Вывод ошибки            
+           
             Label ShiftCounterl = control.Controls.Find("Label_ShiftCounter", true).OfType<Label>().FirstOrDefault();
             Label LB_LOTCounter = control.Controls.Find("LB_LOTCounter", true).OfType<Label>().FirstOrDefault();
             Label Fas_StartRange = control.Controls.Find("Fas_StartRange", true).OfType<Label>().FirstOrDefault();
             DataGridView DG_UpLog = control.Controls.Find("DG_UpLog", true).OfType<DataGridView>().FirstOrDefault();
-            //if (GetDate())
-            //{ LabelStatus(Controllabel, $"Не указана дата в лоте, база FAS_GS_Lots, вызовите технолога", Color.Red); return; }
-
-
-            if (LengthCheck.Checked)
-                if (TB.TextLength != 21)
-                { LabelStatus(Controllabel, $"{TB.Text} не верный формат номера", Color.Red); return; }   
-
 
             if (CheckLazerPCBID(TB.Text)) //Проверка номера в базе LazerBase //Добавить THT Start
                 {LabelStatus(Controllabel, $"{TB.Text} не зарегистрирован в базе LazerBase или THTStart", Color.Red); return;}
 
-                var FullSN = CheckAssemlyPCBID();
-                if (FullSN == "False")
-                { LabelStatus(Controllabel, $"{TB.Text} уже был отсканирован в лоте {_Lot}", Color.Red); return; }
+            var FullSN = CheckAssemlyPCBID(); //Проверка отсканированного баркода в таблице FasStart
 
-                if (!string.IsNullOrEmpty(FullSN))
-                {
-                    if (!UpPrintSN)
-                     { LabelStatus(Controllabel, $"{TB.Text} уже присвоен {FullSN}", Color.Red); return; }
+            if (FullSN == "False") //Плата с таким баркодом была отскнирована в другом лоте
+            { LabelStatus(Controllabel, $"{TB.Text} уже был отсканирован в лоте {_Lot}", Color.Red); return; }
 
-                    var Mes = new msg($"{TB.Text} уже присвоен \n SN номер{FullSN} \n Хотите перепечатать SN номер?");
-                    var Result = Mes.ShowDialog();
+            if (!string.IsNullOrEmpty(FullSN)) //Если плата с таким баркодом была отсканирована на FasStart и имеет лот такой же с каким и работает программа
+            {
+                if (!UpPrintSN) //Проверка печати, если печати нет, то вывод ошибки
+                 { LabelStatus(Controllabel, $"{TB.Text} уже присвоен {FullSN}", Color.Red); return; }
 
-                    if (Result == DialogResult.No)
-                    { LabelStatus(Controllabel, $"{TB.Text} уже присвоен SN {FullSN} \n печать отменена!", Color.Red); return; }
+                Print(TB.Text,FullSN, Controllabel);
 
-                    if (string.IsNullOrEmpty(printName))
-                    { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return; }
+                #region Старый код
+                //msg Mes = new msg($"{TB.Text} уже присвоен \n SN номер{FullSN} \n Хотите перепечатать SN номер?"); //Запрос на перепечатку
+                //var Result = Mes.ShowDialog();
 
-                    var printCodeSN = FullSN.Substring(0, 22) + ">6" + FullSN.Substring(22);
-                    var PrintTextSN = FullSN.Substring(0, 2) + " " + FullSN.Substring(2, 4) + " " + FullSN.Substring(6, 2) + " " + FullSN.Substring(8, 2) +
-                                      " " + FullSN.Substring(10, 2) + " " + FullSN.Substring(12, 3) + " " + FullSN.Substring(15, 8);
+                //if (Result == DialogResult.No) //Если печать отменена
+                //{ LabelStatus(Controllabel, $"{TB.Text} уже присвоен SN {FullSN} \n печать отменена!", Color.Red); return; }
 
-                    if (CheckPathPrinterSettings())
-                        CreatePathPrinter();
+                //if (string.IsNullOrEmpty(printName)) //Проверка подклчюение принетера
+                //{ LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return; }
 
-                    var list = Directory.GetFiles(@"C:\PrinterSettings").ToList();
-                    var X = GetPrSet(list, "XSN");
-                    var Y = GetPrSet(list, "YSN");
-                    DateText = GetManufDate(FullSN);                   
-                    print(LabelSN(PrintTextSN, printCodeSN,int.Parse(X), int.Parse(Y)));
+                ////Текстовые переменные для печати
+                //var printCodeSN = FullSN.Substring(0, 22) + ">6" + FullSN.Substring(22);
+                //var PrintTextSN = FullSN.Substring(0, 2) + " " + FullSN.Substring(2, 4) + " " + FullSN.Substring(6, 2) + " " + FullSN.Substring(8, 2) +
+                //                  " " + FullSN.Substring(10, 2) + " " + FullSN.Substring(12, 3) + " " + FullSN.Substring(15, 8);
 
-                    { LabelStatus(Controllabel, $"{TB.Text} уже присвоен SN {FullSN} \n Печать готова!", Color.Green); return; }
-                }
+                //if (CheckPathPrinterSettings()) //Првоерка координат принтера
+                //    CreatePathPrinter(); //Если не найдена настройка, создаем её
+
+                //var list = Directory.GetFiles(@"C:\PrinterSettings").ToList(); //Берем с папки координаты
+                //var X = GetPrSet(list, "XSN"); //Определение X координаты
+                //var Y = GetPrSet(list, "YSN"); //Определение Y координаты
+                //DateText = GetManufDate(FullSN);  //Берем дату на FasStart этого номера                 
+                //print(LabelSN(PrintTextSN, printCodeSN,int.Parse(X), int.Parse(Y))); //Печать номера
+                ////Вывод сообщения что все хорошо завершение события
+                //LabelStatus(Controllabel, $"{TB.Text} уже присвоен SN {FullSN} \n Печать готова!", Color.Green);
+                #endregion
+
+                return; 
+            }
 
             //=================================================================================
-            //работа с диапозоном
+            //работа с диапазоном
 
             //False  Все прошло успешно
             //True   Ошибка
-            //Abort  Закончились серийные номера во всех диапозонах
-            //New    Если открывается новый диапозон
+            //Abort  Закончились серийные номера во всех диапазонах
+            //New    Если открывается новый диапазон
 
-          Link: var R = GetlabelDate(); //Метод, который проверяет, есть ли диапозон, если есть, то работа идет по диапозону
+          Link: var R = GetlabelDate(); //Метод, который проверяет, есть ли диапазон, если есть, то работа идет по диапазону
 
             if (R == "True") //Ошибка
             { LabelStatus(Controllabel, $"Ошибка при получении Серийного номера с таблицы \n FAS_SerialNumbers", Color.Red); return; }
 
             if (R == "Abort") //Закончилсь номера
-            { LabelStatus(Controllabel, $"Закончились серийные номера в диапозонах! Вызовите технолога", Color.Red); return; }
+            { LabelStatus(Controllabel, $"Закончились серийные номера в диапазонах! Вызовите технолога", Color.Red); return; }
 
-            if (R == "New") //Открывается новый диапозон          
-                goto Link; //Снова переходим к 156 строке и проверяем новый выбранный диапозон
-            
-            Fas_StartRange.Text = $"Дата Label - {DateText} \n Диапозон: Start {StartRange}, End {EndRange} \n Литер {LitIndex}";
+            if (R == "New") //Открывается новый диапазон          
+                goto Link; //Снова переходим к 156 строке и проверяем новый выбранный диапазон
 
-            if (WriteDB(0, Controllabel)) { return; }
+            //Вывод на лейбл инфо о диапозоне
+            Fas_StartRange.Text = $"Дата Label - {DateText} \n диапазон: Start {StartRange}, End {EndRange} \n Литер {LitIndex}"; 
+
+            if (WriteDB(0, Controllabel)) { return; } //Операция изменение информации о серийном номере, который мы определили
 
                 if (FullSTBSN.Length == 23)
                 {
@@ -224,6 +248,34 @@ namespace GS_STB.Class_Modules
         //    { DateText = DateTime.Parse(DateFas_ST_Text + " " + DateTime.Now.ToString("HH:mm:ss")); return false; }
         // }
 
+        void Print(string TBTEXT, string FullSN, Label Controllabel)
+        {
+            msg Mes = new msg($"{TBTEXT} уже присвоен \n SN номер{FullSN} \n Хотите перепечатать SN номер?"); //Запрос на перепечатку
+            var Result = Mes.ShowDialog();
+
+            if (Result == DialogResult.No) //Если печать отменена
+            { LabelStatus(Controllabel, $"{TBTEXT} уже присвоен SN {FullSN} \n печать отменена!", Color.Black); return; }
+
+            if (string.IsNullOrEmpty(printName)) //Проверка подклчюение принетера
+            { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return; }
+
+            //Текстовые переменные для печати
+            var printCodeSN = FullSN.Substring(0, 22) + ">6" + FullSN.Substring(22);
+            var PrintTextSN = FullSN.Substring(0, 2) + " " + FullSN.Substring(2, 4) + " " + FullSN.Substring(6, 2) + " " + FullSN.Substring(8, 2) +
+                              " " + FullSN.Substring(10, 2) + " " + FullSN.Substring(12, 3) + " " + FullSN.Substring(15, 8);
+
+            if (CheckPathPrinterSettings()) //Првоерка координат принтера
+                CreatePathPrinter(); //Если не найдена настройка, создаем её
+
+            var list = Directory.GetFiles(@"C:\PrinterSettings").ToList(); //Берем с папки координаты
+            var X = GetPrSet(list, "XSN"); //Определение X координаты
+            var Y = GetPrSet(list, "YSN"); //Определение Y координаты
+            DateText = GetManufDate(FullSN);  //Берем дату на FasStart этого номера                 
+            print(LabelSN(PrintTextSN, printCodeSN, int.Parse(X), int.Parse(Y))); //Печать номера
+                                                                                  //Вывод сообщения что все хорошо завершение события
+            LabelStatus(Controllabel, $"{FullSN} \n Печать готова!", Color.Green);
+        }
+
         string CheckBaseDate()
         {
             using (var FAS = new FASEntities())
@@ -241,13 +293,10 @@ namespace GS_STB.Class_Modules
                 return FAS.FAS_GS_LOTs.Where(c => c.LOTID == LOTID).Select(c => c.Fixed_Range_Date).FirstOrDefault().Value.ToString("dd.MM.yyyy");
             }
         }
-
-
         void update()
         {
             using (FASEntities FAS = new FASEntities())
-            {
-              
+            {              
                 var F = FAS.FAS_SerialNumbers.Where(c => c.SerialNumber == SerNumber);
                 F.FirstOrDefault().IsActive = false;
                 FAS.SaveChanges();
@@ -270,12 +319,12 @@ namespace GS_STB.Class_Modules
             //    SerNumber = GetSerialNumber();
 
 
-            updateSerNum(SerNumber);
-            Thread.Sleep(003);
-            if (CheckSerialNumer(SerNumber) == 0)
-            {
-                itter += 1;
-                if (itter == 4)
+            updateSerNum(SerNumber); //в таблице Fas_serialNumbers номер делаем used = true и присваиваем printstationID
+            Thread.Sleep(003); //Задержка 3 миллисекунды
+            if (CheckSerialNumer(SerNumber) == 0) //Проверка действий выше, прверяем этот серийный номер с printStationID 
+            { //Если ничего не нашли
+                itter += 1; // Повторяем иттерацию
+                if (itter == 4) //
                 {
                     if (TempSN())
                     { LabelStatus(label, "В БАЗЕ ЗАКОНЧИЛИСЬ СЕРИЙНЫЕ НОМЕРА!", Color.Red); return true; }
@@ -382,12 +431,37 @@ namespace GS_STB.Class_Modules
             }
         }
 
+        string CheckSerialNumber(string SerialNumber)
+        {
+            if (!int.TryParse(SerialNumber.Substring(15), out int k)) 
+                return $"Ошибка преобразования серийного номера - {SerialNumber} - в число, не верный номер!"; //Ошибка преобразования
+
+            int serial = int.Parse(SerialNumber.Substring(15));
+
+            using (var fas = new FASEntities())
+            {
+                bool Result = fas.FAS_SerialNumbers.Where(c => c.SerialNumber == serial & c.LOTID == LOTID).Select(c => c.SerialNumber == c.SerialNumber).FirstOrDefault();
+                if (!Result)
+                    return $"Серийный номер - {SerialNumber} - не найден в таблице Fas_SerialNumbers в текущем лоте!"; //номер не найден в лоте
+
+                Result = fas.FAS_SerialNumbers.Where(c => c.SerialNumber == serial & c.LOTID == LOTID & c.IsUsed == true).Select(c => c.SerialNumber == c.SerialNumber).FirstOrDefault();
+                if (!Result)
+                    return $"Серийный номер - {SerialNumber} - имеет статус IsUsed = 0, номер не использован в базе "; //Номер не использован
+
+                var ser = fas.FAS_Start.Where(c => c.FullSTBSN == SerialNumber).Select(c => c.FullSTBSN).FirstOrDefault();
+                if (string.IsNullOrEmpty(ser))
+                    return $"Серийный номер - {SerialNumber} - не найден в таблице Fas_Start"; //Номер не зарегистрирован на FasStart
+
+                return ser;
+
+            }
+        }
         bool GetSerialNumber()
         {
             using (FASEntities FAS = new FASEntities())
             {
-                //var list = GetListRange(LOTID); //Список номеров которые входят в диапозоны
-                //Берем первый серийный номер, который не касается диапозонов
+                //var list = GetListRange(LOTID); //Список номеров которые входят в диапазоны
+                //Берем первый серийный номер, который не касается диапазонов
                 var ser = FAS.FAS_SerialNumbers.Where(c => c.LOTID == (short)LOTID && c.IsUsed == false && c.IsActive == true & c.FixedID == null).Select(c => c.SerialNumber).Take(1).FirstOrDefault(); 
                 if (ser != 0)
                 {
@@ -398,22 +472,21 @@ namespace GS_STB.Class_Modules
                 return true;
             }
         }
-
         string GetSerialNumberRange()
         {
             using (FASEntities FAS = new FASEntities())
             {               
                 for (int i = 0; i < GridRange.RowCount; i++) //Берем дипозон, который мы выбрали в настройки формы
                 {
-                   var st = int.Parse(GridRange[0, i].Value.ToString()); //Берем начало диапозона
-                   var end = int.Parse(GridRange[1, i].Value.ToString()); //Берем конец диапозона
+                   var st = int.Parse(GridRange[0, i].Value.ToString()); //Берем начало диапазона
+                   var end = int.Parse(GridRange[1, i].Value.ToString()); //Берем конец диапазона
 
-                    //Берем первый свободный номер с диапозона
+                    //Берем первый свободный номер с диапазона
                    var ser =  FAS.FAS_SerialNumbers.Where
                    (c => c.LOTID == (short)LOTID && c.IsUsed == false && c.IsActive == true && c.SerialNumber >= st && c.SerialNumber <= end)
                    .Select(c => c.SerialNumber).Take(1).FirstOrDefault();
 
-                    if (ser != 0) //Если номер в диапозоне найден, сохраняем данные, успешно выходим из метода
+                    if (ser != 0) //Если номер в диапазоне найден, сохраняем данные, успешно выходим из метода
                     {
                         SerNumber = ser;
                         DateText = DateTime.Parse(GridRange[2, i].Value.ToString());
@@ -421,23 +494,19 @@ namespace GS_STB.Class_Modules
                     }  
                 }
 
-                //Если мы дошли да этого кода, то значит в диапозоне закончились номера
-                FixedRange FR = new FixedRange(LOTID, this,"В базе для этого диапозона закончились серийные номера \n выберите следующий или вызовите технолога",LitIndex);
-                var Result = FR.ShowDialog(); //Открываем форму, чтобы выбрать следующий диапозон
+                //Если мы дошли да этого кода, то значит в диапазоне закончились номера
+                FixedRange FR = new FixedRange(LOTID, this,"В базе для этого диапазона закончились серийные номера \n выберите следующий или вызовите технолога",LitIndex);
+                var Result = FR.ShowDialog(); //Открываем форму, чтобы выбрать следующий диапазон
 
                 if (Result == DialogResult.Abort) //Если вернул Abort, номера закончились полностью
                     return "Abort";
-                if (Result == DialogResult.OK) //Если вернул OK, то работает по новому диапозону         
+                if (Result == DialogResult.OK) //Если вернул OK, то работает по новому диапазону         
                     return "New";
-                if (Result == DialogResult.Retry) //Если вернул OK, то работает по новому диапозону         
+                if (Result == DialogResult.Retry) //Если вернул OK, то работаем БЕЗ диапазона        
                     return "Retry";
 
                 return "True";
-
-
                 //BaseC.DateFas_Start = true;
-
-
             }
         }
 
@@ -464,20 +533,22 @@ namespace GS_STB.Class_Modules
         {
             using (FASEntities FAS = new FASEntities())
             {
-                var SerNum = FAS.FAS_Start.Where(v => v.PCBID == PCBID).Select(c => c.SerialNumber).FirstOrDefault();
-                if (SerNum == 0)
-                    return "";
+                var SerNum = FAS.FAS_Start.Where(v => v.PCBID == PCBID).Select(c => c.SerialNumber).FirstOrDefault(); //Поиск серийного номера по баркоду
+                if (SerNum == 0) //Не найден
+                    return ""; //Возвращаем пустое значение, все хорошо
 
+                //Серийный номер найден по баркоду
+                //Ищем лот по серийному номеру, добавяем его в локальную переменную
                 _Lot = (from Se in FAS.FAS_SerialNumbers
                         join GS in FAS.FAS_GS_LOTs on Se.LOTID equals GS.LOTID
                         where Se.SerialNumber == SerNum
                         select GS.LOTID).FirstOrDefault();
                 
 
-                if (_Lot == (short)this.LOTID)
-                    return FAS.FAS_Start.Where(c => c.PCBID == PCBID).Select(c => c.FullSTBSN).FirstOrDefault();
+                if (_Lot == (short)this.LOTID) //Если найденный лот равен текущему лоту в котром работает программа
+                    return FAS.FAS_Start.Where(c => c.PCBID == PCBID).Select(c => c.FullSTBSN).FirstOrDefault(); //Возращаем полный серийный номер
 
-                return "False";
+                return "False"; //Возвращаем False, пишем ошибку
             }
         }
 
@@ -494,7 +565,6 @@ namespace GS_STB.Class_Modules
 
                     for (int k = st[i-1]; k <= end[i-1]; k++)
                         list.Add(k);
-
                 }
             }
             return list;
@@ -521,36 +591,36 @@ namespace GS_STB.Class_Modules
         {
             SerNumber = 0; //очистка локальной переменной 
 
-            #region проверка диапозона с каждым сканированем (откл)
-            // С каждым сканом, проверяет не установился ли диапозон на лот
+            #region проверка диапазона с каждым сканированем (откл)
+            // С каждым сканом, проверяет не установился ли диапазон на лот
             //if (!DateFas_Start)
-            //    if (Checkrange()) // Проверка, есть ли в этом лоте диапозон          
+            //    if (Checkrange()) // Проверка, есть ли в этом лоте диапазон          
             //        DateFas_Start = true;
             //    else
             //        GetLineForPrint();
             //========================================
             #endregion
 
-            if (DateFas_Start) // Работа по диапозону, если он существует
+            if (DateFas_Start) // Работа по диапазону, если он существует
             {
                 LineForPrint = "01";
-                //Abort = Закончились серийные номера во всех диапозонах
+                //Abort = Закончились серийные номера во всех диапазонах
                 //False = Прошло успешно!
                 //True = Ошибка
-                //New = Открывается новый диапозон
-                //None = Работа без диапозона
+                //New = Открывается новый диапазон
+                //None = Работа без диапазона
                 var Result = GetSerialNumberRange(); //Получаем результат
 
                 if (Result == "False")
                     return "False"; //Если все прошло успешно, возвращаем False
 
-                if (Result == "New") //Если открывается новый диапозон
+                if (Result == "New") //Если открывается новый диапазон
                     return "New";                
 
                 if (Result == "Abort")
-                    return "Abort"; //Закончились серийные номера во всех диапозонах
+                    return "Abort"; //Закончились серийные номера во всех диапазонах
 
-                if (Result == "Retry") //Если начали без диапозона работать
+                if (Result == "Retry") //Если начали без диапазона работать
                     return NotRange();
 
                 return "True";
@@ -579,16 +649,18 @@ namespace GS_STB.Class_Modules
         void GetLot(DataGridView Grid)
         {
             loadgrid.Loadgrid(Grid, @"use FAS select 
-LOTCode,FULL_LOT_Code,ModelName,
-(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID) InLot,
-(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 0 and s.IsActive = 1) Ready,
-(select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 1 ) Used,
-LOTID, Scenario ,RangeStart,RangeEnd, FixedRG,StartDate
-from FAS_GS_LOTs as gs
-left join FAS_Models as m on gs.ModelID = m.ModelID
-left join FAS_LabelScenario as L on gs.LabelScenarioID = L.ID
-where IsActive = 1
-order by LOTID desc ");
+                                    LOTCode,FULL_LOT_Code,ModelName,
+                                    (select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID) InLot,
+                                    (select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 0 and s.IsActive = 1) Ready,
+                                    (select count(1) from FAS_SerialNumbers as s where LOTID = gs.LOTID and s.IsUsed = 1 ) Used,
+                                    LOTID, Scenario ,RangeStart,RangeEnd, FixedRG,StartDate
+                                    from FAS_GS_LOTs as gs
+                                    left join FAS_Models as m on gs.ModelID = m.ModelID
+                                    left join FAS_LabelScenario as L on gs.LabelScenarioID = L.ID
+                                    where IsActive = 1
+                                    order by LOTID desc ");
+
+            #region Старый код
             //using (FASEntities FAS = new FASEntities())
             //{
             //    var list = from Lot in FAS.FAS_GS_LOTs
@@ -606,8 +678,8 @@ order by LOTID desc ");
             //                   User = (from s in FAS.FAS_SerialNumbers where s.IsUsed == true & s.LOTID == Lot.LOTID select s.LOTID).Count(),
             //                   LOTID = Lot.LOTID,
             //                   Scenario = Label.Scenario,
-            //                   СтартДиапозон = Lot.RangeStart,
-            //                   КонецДиапозон = Lot.RangeEnd,
+            //                   Стартдиапазон = Lot.RangeStart,
+            //                   Конецдиапазон = Lot.RangeEnd,
             //                   FixedRG = Lot.FixedRG,
             //                   StartDate = Lot.StartDate
 
@@ -615,6 +687,7 @@ order by LOTID desc ");
 
             //    Grid.DataSource = list.ToList();
             //}
+            #endregion
         }
         bool Checkrange()
         {

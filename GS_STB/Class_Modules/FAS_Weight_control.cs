@@ -11,10 +11,8 @@ using System.Windows.Forms;
 namespace GS_STB.Class_Modules
 {
     class FAS_Weight_control : BaseClass
-
     {
         SerialPort SerialPort { get; set; }
-
         int ShortSN;
         string _SN;
         public FAS_Weight_control()
@@ -31,10 +29,8 @@ namespace GS_STB.Class_Modules
         {
             TextBox TB = control.Controls.Find("SerialTextBox", true).OfType<TextBox>().FirstOrDefault();
             Label Controllabel = control.Controls.Find("Controllabel", true).OfType<Label>().FirstOrDefault();
-
             if (TB.TextLength == 23)
             {
-
                 if (string.IsNullOrEmpty(COMPORT))
                     GetPortName();
                 if (string.IsNullOrEmpty(COMPORT))
@@ -60,15 +56,10 @@ namespace GS_STB.Class_Modules
                 var SerialInfoList = GetSerialNum(ShortSN);
                 if (CheckPoints(SerialInfoList, Controllabel))
                     return;
-
-
-
-
             }
-            else
-            {
-                { LabelStatus(Controllabel, $"Не верный формат номера {TB.Text}", Color.Red); return; }
-            }
+            else            
+              { LabelStatus(Controllabel, $"Не верный формат номера {TB.Text}", Color.Red); return; }
+           
 
 
         }

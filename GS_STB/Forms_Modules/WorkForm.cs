@@ -1,4 +1,5 @@
 ﻿using GS_STB.Class_Modules;
+using GS_STB.Forms_Modules;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -60,7 +61,6 @@ namespace GS_STB
             Times.Enabled = true; LBPrintSN.Text = DateTime.Now.ToString("dd.MM.yyyy"); //Настройка времени
             Controllabel.Text = "";
             TestGrid.Rows.Add(12);
-
             //Реализация загрузки определенного класса
 
             CloseApp.Click += (a, e) =>
@@ -68,7 +68,6 @@ namespace GS_STB
                 var Result = MessageBox.Show("Уверены, что хотите выйти?","Предупреждение",MessageBoxButtons.YesNo,MessageBoxIcon.Question);
                 if (Result == DialogResult.Yes)
                     Application.Exit();
-
             };
 
             BackButton.Click += (a, e) => 
@@ -76,7 +75,6 @@ namespace GS_STB
                 var Result = MessageBox.Show("Уверены, что хотите вернуться в меню настройки?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 if (Result == DialogResult.Yes)
                     Close();
-
             };
 
             GETSNCH.Click += (a, e) =>
@@ -85,7 +83,6 @@ namespace GS_STB
                     BaseC.CheckGetSN = true;
                 if (!GETSNCH.Checked)
                     BaseC.CheckGetSN = false;
-
             };
 
             BTPrint.Click += (a, e) =>
@@ -152,10 +149,6 @@ namespace GS_STB
                     SaveSettingPrint(SNPRINT);
                 if (IDPrint.Visible == true)
                     SaveSettingPrint(IDPrint);
-
-
-
-
             };
 
             BT_PrinterSettings.Click += (a, e) => 
@@ -163,10 +156,10 @@ namespace GS_STB
                 GB_PrinterSettings.Visible = true; SettingDelay.Visible = true;
                 foreach (Control item in SettingDelay.Controls)               
                     if (item.Name.Contains("Delay"))
-                        item.Enabled = true;
-                
+                        item.Enabled = true;                
                
             };
+
             BT_ClosePrintSet.Click += (a, e) => 
             { 
                 GB_PrinterSettings.Visible = false; SettingDelay.Visible = false; SaveSettingBT.Text = ""; SerialTextBox.Select();
@@ -311,9 +304,6 @@ namespace GS_STB
             GB_UserData.Size = new Size(429, 177);
             TB_RFIDIn.Select();
         }
-
-    
-
         void SetInfoGrid()
         {
             if (BaseC.GetType() == typeof(FAS_END))
@@ -346,12 +336,10 @@ namespace GS_STB
         {
             DG_UpLog.ColumnCount = BaseC.ListHeader.Count;
             for (int i = 0; i < BaseC.ListHeader.Count; i++)            
-                DG_UpLog.Columns[i].HeaderText = BaseC.ListHeader[i];
-           
+                DG_UpLog.Columns[i].HeaderText = BaseC.ListHeader[i];           
         }
 
-        private void Times_Tick(object sender, EventArgs e)
-                
+        private void Times_Tick(object sender, EventArgs e)                
         {
             CurrrentTimeLabel.Text = DateTime.Now.ToString("HH:mm:ss");
         }
@@ -384,10 +372,13 @@ namespace GS_STB
 
             SaveDelays.Text = "Сохранено";
         }
-
-        private void WorkForm_FormClosed(object sender, FormClosedEventArgs e)
+        private void PrintCheckSN_Click(object sender, EventArgs e)
         {
+            var Confim = new ConfimUser();
+            var Result = Confim.ShowDialog();
 
+            if (Result == DialogResult.Cancel)
+                PrintCheckSN.Checked = !PrintCheckSN.Checked;
         }
     }
 }
