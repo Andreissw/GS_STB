@@ -120,6 +120,9 @@ namespace GS_STB
             AbortForm.ShowDialog();
         }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
 
+        }
     }
 }

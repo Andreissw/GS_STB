@@ -26,7 +26,7 @@ namespace GS_STB.Forms_Modules
             {
                 DG_LOTList.DataSource = (from Lot in FAS.FAS_GS_LOTs
                                    join model in FAS.FAS_Models on Lot.ModelID equals model.ModelID
-                                   where Lot.IsActive == true && Lot.FixedRG == true
+                                   where Lot.IsActive == true /*&& Lot.FixedRG == true*/
                                    orderby Lot.LOTID descending
                                    select new
                                    {
@@ -64,6 +64,25 @@ namespace GS_STB.Forms_Modules
             }
         }
 
+        void GridLoadSNNotRange(int lotid)
+        {
+            SNGrid.Visible = true;
+            using (var fas = new FASEntities())
+            {
+                SNGrid.DataSource = fas.FAS_SerialNumbers
+                    .Where(c=> c.IsPacked == false && c.LOTID == lotid)
+                    .Select(c => new { LotID = c.LOTID, Серийный_номер = c.SerialNumber, c.IsUsed, c.IsActive, c.IsUploaded, c.IsWeighted, c.IsPacked, c.PrintStationID })
+                    .ToList();
+
+                var count = fas.FAS_SerialNumbers
+                    .Where(c =>  c.IsPacked == false && c.LOTID == lotid)
+                    .Select(c => new { Серийный_номер = c.SerialNumber, LotID = c.LOTID, c.IsUsed, c.IsActive, c.IsUploaded, c.IsWeighted, c.IsPacked, c.PrintStationID }).Count();
+                INFO.Visible = true;
+                INFO.Text = $"Найдено {count} использованных и не упакованных номера";
+                AbortBT.Visible = true;
+            }
+        }
+
         int Stser;
         int EndSer;
         private void BT_OpenWorkForm_Click(object sender, EventArgs e)
@@ -75,6 +94,14 @@ namespace GS_STB.Forms_Modules
             { MessageBox.Show("Лот не выбран!"); return; }
 
             int LOTID = int.Parse(DG_LOTList[6, DG_LOTList.CurrentRow.Index].Value.ToString());
+
+            if (DG_LOTList[7, DG_LOTList.CurrentRow.Index].Value == null) //Если нет диапозона
+            {
+                GridLoadSNNotRange(LOTID);
+                SNGrid.Select();
+                return;
+            }
+
             FixedRange FR = new FixedRange(LOTID);           
             var Result = FR.ShowDialog();
             if (Result == DialogResult.Cancel)//Если нажали отмена, выходим из метода

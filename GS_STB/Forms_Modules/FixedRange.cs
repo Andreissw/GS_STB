@@ -146,8 +146,10 @@ namespace GS_STB.Forms_Modules
                 if (GridRange[3,I].Value.ToString() != (index + 1).ToString()) 
                 { MessageBox.Show($"Вы можете выбрать диапазон только с ЛитерИндекс - {index + 1}"); return; }
 
-            if (GridRange[6, I].Value.ToString() == "0") 
-            { MessageBox.Show("Текущий диапазон израсходован"); return; }
+            if (GridRange[6, I].Value.ToString() == "0")
+                if (LotID != 106) //Временное условие
+                { MessageBox.Show("Текущий диапазон израсходован"); return; }
+
 
             BC.LitIndex = short.Parse(GridRange[3, I].Value.ToString());
 

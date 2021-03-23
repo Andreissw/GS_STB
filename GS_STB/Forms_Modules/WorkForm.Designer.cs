@@ -29,13 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.GB_UserData = new System.Windows.Forms.GroupBox();
             this.BT_LogOut = new System.Windows.Forms.Button();
             this.Label13 = new System.Windows.Forms.Label();
             this.TB_RFIDIn = new System.Windows.Forms.TextBox();
             this.GB_Work = new System.Windows.Forms.GroupBox();
+            this.PrintCheckSN = new System.Windows.Forms.CheckBox();
+            this.LengthCheck = new System.Windows.Forms.CheckBox();
             this.FASENDLB = new System.Windows.Forms.Label();
             this.Fas_StartRange = new System.Windows.Forms.Label();
             this.SettingDelay = new System.Windows.Forms.GroupBox();
@@ -82,7 +84,6 @@
             this.PB = new System.Windows.Forms.ProgressBar();
             this.FAS_Print = new System.Windows.Forms.GroupBox();
             this.COM = new System.Windows.Forms.Label();
-            this.LengthCheck = new System.Windows.Forms.CheckBox();
             this.CountLBID = new System.Windows.Forms.Label();
             this.CountLBSN = new System.Windows.Forms.Label();
             this.CHPrintID = new System.Windows.Forms.CheckBox();
@@ -127,7 +128,6 @@
             this.LBPrintSN = new System.Windows.Forms.Label();
             this.CurrrentTimeLabel = new System.Windows.Forms.Label();
             this.Times = new System.Windows.Forms.Timer(this.components);
-            this.PrintCheckSN = new System.Windows.Forms.CheckBox();
             this.GB_UserData.SuspendLayout();
             this.GB_Work.SuspendLayout();
             this.SettingDelay.SuspendLayout();
@@ -214,6 +214,7 @@
             // GB_Work
             // 
             this.GB_Work.Controls.Add(this.PrintCheckSN);
+            this.GB_Work.Controls.Add(this.LengthCheck);
             this.GB_Work.Controls.Add(this.FASENDLB);
             this.GB_Work.Controls.Add(this.Fas_StartRange);
             this.GB_Work.Controls.Add(this.SettingDelay);
@@ -236,6 +237,32 @@
             this.GB_Work.TabIndex = 31;
             this.GB_Work.TabStop = false;
             this.GB_Work.Visible = false;
+            // 
+            // PrintCheckSN
+            // 
+            this.PrintCheckSN.AutoSize = true;
+            this.PrintCheckSN.Location = new System.Drawing.Point(998, 419);
+            this.PrintCheckSN.Name = "PrintCheckSN";
+            this.PrintCheckSN.Size = new System.Drawing.Size(272, 17);
+            this.PrintCheckSN.TabIndex = 1003;
+            this.PrintCheckSN.Text = "Печать серийного номера по серийному номеру";
+            this.PrintCheckSN.UseVisualStyleBackColor = true;
+            this.PrintCheckSN.Visible = false;
+            this.PrintCheckSN.Click += new System.EventHandler(this.PrintCheckSN_Click);
+            // 
+            // LengthCheck
+            // 
+            this.LengthCheck.AutoSize = true;
+            this.LengthCheck.Checked = true;
+            this.LengthCheck.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.LengthCheck.Location = new System.Drawing.Point(998, 450);
+            this.LengthCheck.Name = "LengthCheck";
+            this.LengthCheck.Size = new System.Drawing.Size(79, 43);
+            this.LengthCheck.TabIndex = 138;
+            this.LengthCheck.Text = "Проверка \r\nдлины\r\nBarcode";
+            this.LengthCheck.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.LengthCheck.UseVisualStyleBackColor = true;
+            this.LengthCheck.Visible = false;
             // 
             // FASENDLB
             // 
@@ -324,7 +351,7 @@
             0});
             this.Delay11.Location = new System.Drawing.Point(316, 277);
             this.Delay11.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -348,7 +375,7 @@
             0});
             this.Delay10.Location = new System.Drawing.Point(316, 254);
             this.Delay10.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -372,7 +399,7 @@
             0});
             this.Delay9.Location = new System.Drawing.Point(316, 228);
             this.Delay9.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -396,7 +423,7 @@
             0});
             this.Delay8.Location = new System.Drawing.Point(316, 202);
             this.Delay8.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -420,7 +447,7 @@
             0});
             this.Delay7.Location = new System.Drawing.Point(316, 176);
             this.Delay7.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -444,7 +471,7 @@
             0});
             this.Delay6.Location = new System.Drawing.Point(316, 150);
             this.Delay6.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -468,7 +495,7 @@
             0});
             this.Delay5.Location = new System.Drawing.Point(316, 124);
             this.Delay5.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -492,7 +519,7 @@
             0});
             this.Delay4.Location = new System.Drawing.Point(316, 98);
             this.Delay4.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -516,7 +543,7 @@
             0});
             this.Delay3.Location = new System.Drawing.Point(316, 72);
             this.Delay3.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -540,7 +567,7 @@
             0});
             this.Delay2.Location = new System.Drawing.Point(316, 46);
             this.Delay2.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -564,7 +591,7 @@
             0});
             this.Delay1.Location = new System.Drawing.Point(316, 20);
             this.Delay1.Maximum = new decimal(new int[] {
-            2000,
+            20000,
             0,
             0,
             0});
@@ -858,7 +885,6 @@
             // FAS_Print
             // 
             this.FAS_Print.Controls.Add(this.COM);
-            this.FAS_Print.Controls.Add(this.LengthCheck);
             this.FAS_Print.Controls.Add(this.CountLBID);
             this.FAS_Print.Controls.Add(this.CountLBSN);
             this.FAS_Print.Controls.Add(this.CHPrintID);
@@ -883,20 +909,6 @@
             this.COM.Size = new System.Drawing.Size(31, 13);
             this.COM.TabIndex = 139;
             this.COM.Text = "COM";
-            // 
-            // LengthCheck
-            // 
-            this.LengthCheck.AutoSize = true;
-            this.LengthCheck.Checked = true;
-            this.LengthCheck.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.LengthCheck.Location = new System.Drawing.Point(502, 12);
-            this.LengthCheck.Name = "LengthCheck";
-            this.LengthCheck.Size = new System.Drawing.Size(79, 43);
-            this.LengthCheck.TabIndex = 138;
-            this.LengthCheck.Text = "Проверка \r\nдлины\r\nBarcode";
-            this.LengthCheck.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.LengthCheck.UseVisualStyleBackColor = true;
-            this.LengthCheck.Visible = false;
             // 
             // CountLBID
             // 
@@ -1179,15 +1191,15 @@
             // 
             this.DG_UpLog.AllowUserToAddRows = false;
             this.DG_UpLog.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DG_UpLog.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DG_UpLog.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.DG_UpLog.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.DG_UpLog.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.DG_UpLog.Location = new System.Drawing.Point(0, 383);
             this.DG_UpLog.Name = "DG_UpLog";
             this.DG_UpLog.ReadOnly = true;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.DG_UpLog.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.DG_UpLog.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.DG_UpLog.Size = new System.Drawing.Size(989, 229);
             this.DG_UpLog.TabIndex = 26;
             this.DG_UpLog.TabStop = false;
@@ -1396,18 +1408,6 @@
             // Times
             // 
             this.Times.Tick += new System.EventHandler(this.Times_Tick);
-            // 
-            // PrintCheckSN
-            // 
-            this.PrintCheckSN.AutoSize = true;
-            this.PrintCheckSN.Location = new System.Drawing.Point(998, 419);
-            this.PrintCheckSN.Name = "PrintCheckSN";
-            this.PrintCheckSN.Size = new System.Drawing.Size(272, 17);
-            this.PrintCheckSN.TabIndex = 1003;
-            this.PrintCheckSN.Text = "Печать серийного номера по серийному номеру";
-            this.PrintCheckSN.UseVisualStyleBackColor = true;
-            this.PrintCheckSN.Visible = false;
-            this.PrintCheckSN.Click += new System.EventHandler(this.PrintCheckSN_Click);
             // 
             // WorkForm
             // 

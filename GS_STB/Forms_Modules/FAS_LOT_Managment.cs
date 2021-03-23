@@ -206,7 +206,7 @@ namespace GS_STB.Forms_Modules
 
             if (bool.Parse(GridAddLot[1, 10].Value.ToString()) == true)
             {
-                if (NumerSN.Value != HDCPGrid.RowCount)
+                if (NumerSN.Value > HDCPGrid.RowCount)
                 {
                     MessageBox.Show("Количество SN в лоте не соответсвтует Кол-ву HDCP", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -215,7 +215,7 @@ namespace GS_STB.Forms_Modules
 
             if (bool.Parse(GridAddLot[1, 11].Value.ToString()) == true)
             {
-                if (NumerSN.Value != CertGrid.RowCount)
+                if (NumerSN.Value > CertGrid.RowCount)
                 {
                     MessageBox.Show("Количество SN в лоте не соответсвтует Кол-ву Cert", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;

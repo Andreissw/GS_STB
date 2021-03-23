@@ -42,40 +42,59 @@ made_QC
 ^PQ{count},0,1,Y^XZ";
         }
 
-        public static string PrintID(string SC_Text,int labelCount, int X, int Y)
+        public static string PrintID(string SC_Text,int labelCount, int X, int Y, string WorkScenario)
         {
-            return $@"
+            string text;
+            if (WorkScenario == "2")
+                text = $@"
 ^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^JUS^LRN^CI0^XZ
 ^XA
 ^MMT
 ^PW685
 ^LL0354
 ^LS0
-^BY5,3,163^FT{72+X},{217 + Y}^BCN,,N,N
+^BY5,3,163^FT{72 + X},{217 + Y}^BCN,,N,N
 ^FD>;{SC_Text}^FS
-^FT{82 + X},{292+ Y}^A0N,67,67^FH\^FDID^FS
-^FT{159 + X},{292+Y}^A0N,67,67^FH\^FD{SC_Text}^FS
+^FT{82 + X},{292 + Y}^A0N,67,67^FH\^FDID^FS
+^FT{159 + X},{292 + Y}^A0N,67,67^FH\^FD{SC_Text}^FS
 ^PQ{labelCount},0,1,Y^XZ";
+            else
+            {
+                text = $@"
+^XA~TA000~JSN^LT0^MNW^MTT^PON^PMN^LH0,0^JMA^JUS^LRN^CI0^XZ
+^XA
+^MMT
+^PW650
+^LL0201
+^LS0
+^BY5,3,93^FT{47 + X},{117 + Y}^BCN,,N,N
+^FD>;{SC_Text}^FS
+^FT{122 + X},{167 + Y}^A0N,54,52^FH\^FDID^FS
+^FT{180 + X},{167 + Y}^A0N,54,52^FH\^FD{SC_Text}^FS
+^PQ{labelCount},0,1,Y^XZ";
+            }
+
+            return text;
 
 
-//_положение_ID_
-//^FT{40 + X},{320 + Y}
-//_ориентацияиразмернадписи
-//^A0N,{108 + X},{108 + Y}
-//^FH\^FDID^FS
-//_положение_номераID_
-//^FT{144 + X},{320 + Y}
-//_ориентацияиразмернадписи
-//^A0N,{108 + X},{72 + Y}
-//^FH\^FD{SC_Text}^FS
-//_масштабштрихкода_5и3нетрогать,130высоташтрихкода
-//^BY5,3,{150 + Y}
-//_положение_штрихкода_
-//^FT{60 + X},{220 + Y}
-//_ориентацияштрихкода
-//^BCN,,N,N
-//^FD>;{SC_Text}^FS
-//^PQ{labelCount},0,1,Y^XZ";
+            //_положение_ID_
+            //^FT{40 + X},{320 + Y}
+            //_ориентацияиразмернадписи
+            //^A0N,{108 + X},{108 + Y}
+            //^FH\^FDID^FS
+            //_положение_номераID_
+            //^FT{144 + X},{320 + Y}
+            //_ориентацияиразмернадписи
+            //^A0N,{108 + X},{72 + Y}
+            //^FH\^FD{SC_Text}^FS
+            //_масштабштрихкода_5и3нетрогать,130высоташтрихкода
+            //^BY5,3,{150 + Y}
+            //_положение_штрихкода_
+            //^FT{60 + X},{220 + Y}
+            //_ориентацияштрихкода
+            //^BCN,,N,N
+            //^FD>;{SC_Text}^FS
+            //^PQ{labelCount},0,1,Y^XZ";
 
 
 

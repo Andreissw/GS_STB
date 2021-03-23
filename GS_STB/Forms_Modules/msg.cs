@@ -45,7 +45,14 @@ namespace GS_STB.Forms_Modules
                 return;
 
             this.Close();
-        }      
+        }
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (e.GetHashCode() == 815388)
+                return;
+
+            this.Close();
+        }
 
         private void msg_KeyDown(object sender, KeyEventArgs e)
         {
@@ -60,6 +67,14 @@ namespace GS_STB.Forms_Modules
                 this.DialogResult = DialogResult.No;
                 this.Close();
             }
+
+            if (e.KeyCode == Keys.Enter)
+            {
+                this.DialogResult = DialogResult.Yes;
+                this.Close();
+            }
         }
+
+       
     }
 }

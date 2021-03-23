@@ -37,7 +37,7 @@ namespace GS_STB.Class_Modules
             Label PalletNum = control.Controls.Find("PalletNum", true).OfType<Label>().FirstOrDefault();
             Grid.RowCount = 0;
             if (!CheckCounter()) //Проверка на первый запуск по лоту и линии
-            { AddPacCounter(); Arraylpac = GetpackingCounter(); BoxNum.Text = "1"; PalletNum.Text = "1"; NextBoxNum.Text = (int.Parse(BoxNum.Text) + 1).ToString(); }
+  /* 1 запуск*/  { AddPacCounter(); Arraylpac = GetpackingCounter(); BoxNum.Text = "1"; PalletNum.Text = "1"; NextBoxNum.Text = (int.Parse(BoxNum.Text) + 1).ToString(); }
             else
             {
                 // pac.PalletCounter[0], pac.BoxCounter[1], pac.UnitCounter[2]
@@ -138,8 +138,10 @@ namespace GS_STB.Class_Modules
             { Grid.BackgroundColor = Color.Red;  return; }
 
             //Проверерка флажков
-            if (CheckSN())
-            { Grid.BackgroundColor = Color.Red; return; }            
+            if (!CheckLot())
+                if (CheckSN())
+                { Grid.BackgroundColor = Color.Red; return; }
+
 
             WriteToDB();
             return;
@@ -148,9 +150,9 @@ namespace GS_STB.Class_Modules
         {
             using (var fas = new FASEntities())
             {
-                var _fas = fas.FAS_SerialNumbers.Where(c => c.SerialNumber == ShortSN);
-                _fas.FirstOrDefault().IsPacked = true;
-                fas.SaveChanges();
+                //var _fas = fas.FAS_SerialNumbers.Where(c => c.SerialNumber == ShortSN);
+                //_fas.FirstOrDefault().IsPacked = true;
+                //fas.SaveChanges();
             }
         }
         void UpdateCounter()
@@ -180,6 +182,11 @@ namespace GS_STB.Class_Modules
                     PackingDate = DateTime.UtcNow.AddHours(2),
                     PackingByID = (short)UserID
                 };
+
+                var _fas1 = fas.FAS_SerialNumbers.Where(c => c.SerialNumber == ShortSN);
+                _fas1.FirstOrDefault().IsPacked = true;
+                //fas.SaveChanges();
+
                 fas.FAS_PackingGS.Add(_fas);
                 fas.SaveChanges();
             }
@@ -216,6 +223,7 @@ namespace GS_STB.Class_Modules
             AddPackingGS();
             UpdateCounter();
             SetSerialNumber();
+            AddToOperLogFASEND(FullSTBSN, GetPCBID());
             ShiftCounter += 1;
             LotCounter += 1;
             ShiftCounterUpdate();
@@ -271,7 +279,11 @@ namespace GS_STB.Class_Modules
 
             if (list[1] == false) //Проверка Upload
             {
-                LabelStatus(Controllabel, $"{FullSTBSN} - Не найден в таблице Upload", Color.Red); return false;
+                if (!CheckLot())
+                {
+                    LabelStatus(Controllabel, $"{FullSTBSN} - Не найден в таблице Upload", Color.Red); return false;
+                }
+              
             }
 
             if (list[2] == true) //Проверка Packing
@@ -360,6 +372,15 @@ namespace GS_STB.Class_Modules
             }
         }
 
+        int GetPCBID()
+        {
+            using (var fas = new FASEntities())
+            {
+                var sernumber = int.Parse(FullSTBSN.Substring(15));
+                return fas.FAS_Start.Where(c=>c.SerialNumber == sernumber).Select(c=>c.PCBID).FirstOrDefault();
+            }
+        }
+
         bool CheckSN()
         {
             var list = GetSerialNum(ShortSN);
@@ -367,16 +388,9 @@ namespace GS_STB.Class_Modules
             // S.IsUsed[0], S.IsActive[1], S.IsUploaded[2], S.IsWeighted[3], S.IsPacked[4], S.InRepair[5], F.PCBID[6]
 
             //used 1, active 1, uploaded 1, weighted 1, packed 0
-            if (L[0] == true & L[1] == true & L[2] == true & L[3] == true & L[4] == false ) //Успешно пройдены проверки 
-                return false;
 
-            //used 1, active 1, uploaded 0, weighted 0, packed 0
-            if (L[0] == true & L[1] == true & L[2] == false & L[4] == false ) //Не прошит приемник
-            { LabelStatus(Controllabel, $"{ShortSN} не прошит в приемник", Color.Red); return true; }
-
-            //used 1, active 1, uploaded 1, weighted 0, packed 0
-            if (L[0] == true & L[1] == true & L[2] == true & L[3] == false & L[4] == false ) //Не прошел весовой контроль
-            { LabelStatus(Controllabel, $"{ShortSN} не прошел весовой контроль", Color.Red); return true; }
+            if (L[0] == true & L[1] == true & L[2] == true & L[3] == true & L[4] == false) //Успешно пройдены проверки 
+                return false;           
 
             //used 1, active 1, uploaded 1, weighted 1, packed 1 
             if (L[0] == true & L[1] == true & L[2] == true & L[3] == true & L[4] == true) //Приемник уже упакован
@@ -387,6 +401,27 @@ namespace GS_STB.Class_Modules
 
                  LabelStatus(Controllabel, $"номер {info[4].ToString()} уже упакован /n Литер {info[0].ToString()}, Паллет {info[1].ToString()} /n Групповая {info[2].ToString()} /n Дата упаковки {info[5].ToString()} Упакован: {info[6].ToString()}  ", Color.Red); return true; 
             }
+
+            //used 1, active 1, uploaded 0, weighted 0, packed 0
+            if (L[0] == true & L[1] == true & L[2] == false & L[4] == false) //Не прошит приемник
+            {
+                if (!CheckLot())
+                {
+                    LabelStatus(Controllabel, $"{ShortSN} не прошит в приемник", Color.Red); return true;
+                }
+            }
+
+            //used 1, active 1, uploaded 1, weighted 0, packed 0
+            if (L[0] == true & L[1] == true & L[2] == true || L[2] == false & L[3] == false & L[4] == false) //Не прошел весовой контроль
+            {
+                if (GetWeightCheck())
+                {
+                    LabelStatus(Controllabel, $"{ShortSN} не прошел весовой контроль", Color.Red); return true;
+                }
+                return false;
+            }
+
+
 
             LabelStatus(Controllabel, "Произошла ошибка с проверкой SerialNumbers - обратитесь к Технологу", Color.Red);
             return true;
@@ -604,12 +639,25 @@ order by LOTID desc ");
             
             using (FASEntities FAS = new FASEntities())
             {
-                     var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапазоне Лота, которые готовы к упаковке
-                    .Where(c => c.IsUsed == true && c.IsActive == true && c.IsUploaded == true && c.IsWeighted == true && c.IsPacked == false
-                    && c.SerialNumber >= StartRangeLot && c.SerialNumber <= EndRangeLot).Count();
+                
+                if (LOTID != 106)
+                {
+                         var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапазоне Лота, которые готовы к упаковке
+                        .Where(c => c.IsUsed == true && c.IsActive == true && c.IsUploaded == true && c.IsWeighted == true && c.IsPacked == false
+                        && c.SerialNumber >= StartRangeLot && c.SerialNumber <= EndRangeLot).Count();
 
-                if (R == 0) //Закончились номера в диапазоне лота для упаковки                
-                    return "Abort";                
+                    if (R == 0) //Закончились номера в диапазоне лота для упаковки                
+                        return "Abort";
+                }
+                else
+                {
+                    var R = FAS.FAS_SerialNumbers  //Проверяем сколько осталось неупакованных номеров в диапазоне Лота, которые готовы к упаковке
+                       .Where(c => c.IsUsed == true && c.IsActive == true && c.IsPacked == false
+                       && c.SerialNumber >= StartRangeLot && c.SerialNumber <= EndRangeLot).Count();
+
+                    if (R == 0) //Закончились номера в диапазоне лота для упаковки                
+                        return "Abort";
+                }
             };
 
             result = false;
@@ -641,6 +689,7 @@ order by LOTID desc ");
                 return "NotRange";
 
             return "False";
+
 
             #region
             //using (FASEntities FAS = new FASEntities())
@@ -676,6 +725,25 @@ order by LOTID desc ");
             ////BaseC.DateFas_Start = true;
             #endregion
 
+        }
+
+        bool CheckLot()
+        {
+            if (LOTID == 106)
+                return true;
+            return false;
+        
+        }
+        bool GetWeightCheck()
+        {
+            using (var fas = new FASEntities() )
+            {
+                var result =  fas.FAS_GS_LOTs.Where(c => c.LOTID == LOTID).Select(c => c.GetWeight).FirstOrDefault();
+                if (result == null) //Проверки нет              
+                    return false;
+
+                return (bool)result;
+            }
         }
     }
 }

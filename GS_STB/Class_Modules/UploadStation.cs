@@ -292,8 +292,8 @@ namespace GS_STB.Class_Modules
 
                 if (CASIDShortSerial == ShortSN)   //ShortSN с базы равен с введенным ShortSN 
                 {
-                    if (CheckBoxDublicateSCID)
-                    {
+                    //if (CheckBoxDublicateSCID)
+                    //{
                         if (!UpPrintID & !UpPrintSN) //Проверка настройка печати
                         {
                             using (var fas = new FASEntities())
@@ -307,21 +307,28 @@ namespace GS_STB.Class_Modules
                         mes.ShowDialog(); //разрешение на печать
                         if (mes.DialogResult == DialogResult.No)
                             return "NoPrint";
-
-                        if (string.IsNullOrEmpty(printName))
-                        { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return "true"; }
-
-                        using (var _fas = new FASEntities())
+                        else if (mes.DialogResult == DialogResult.Yes)
                         {
-                            var SmartID = _fas.FAS_Upload.Where(c => c.SerialNumber == ShortSN).Select(c => c.SmartCardID).FirstOrDefault();
-                            var DateText = GetManufDate(_SN);
-                            Prints(TextCode, TextSN, SmartID.ToString(),DateText);
-                            return "Print";
+                            Remove_Fas_Upload(); SetBoolSerialNumbers(ShortSN);
                         }
-                    }
-                    else //Если проверки на дубликат нет        
-                        //Удаляем с Upload      //ставим флажки в SerialNumbers
-                        Remove_Fas_Upload(); SetBoolSerialNumbers(ShortSN);
+                        else 
+                        { 
+
+                            if (string.IsNullOrEmpty(printName))
+                            { LabelStatus(Controllabel, $"Принтер не идентифицирован!", Color.Red); return "true"; }
+
+                            using (var _fas = new FASEntities())
+                            {
+                                var SmartID = _fas.FAS_Upload.Where(c => c.SerialNumber == ShortSN).Select(c => c.SmartCardID).FirstOrDefault();
+                                var DateText = GetManufDate(_SN);
+                                Prints(TextCode, TextSN, SmartID.ToString(),DateText);
+                                return "Print";
+                            }
+                        }
+                    //}
+                    //else //Если проверки на дубликат нет        
+                    //Удаляем с Upload      //ставим флажки в SerialNumbers
+
                 }
 
                 ArrayLoadSnData = LoadSnData(ShortSN);
@@ -407,7 +414,10 @@ namespace GS_STB.Class_Modules
                 var list = Directory.GetFiles(@"C:\PrinterSettings").ToList();
                 var X = GetPrSet(list, "XID");
                 var Y = GetPrSet(list, "YID");
-                print(Print.PrintID(SmartID, UpPrintCountID, int.Parse(X), int.Parse(Y)));
+
+                print(Print.PrintID(SmartID, UpPrintCountID, int.Parse(X), int.Parse(Y), ArListGSLot[6].ToString()));
+
+                //MessageBox.Show(Print.PrintID(SmartID, UpPrintCountID, int.Parse(X), int.Parse(Y), ArListGSLot[6].ToString()));
             }
         }
 
@@ -953,8 +963,12 @@ namespace GS_STB.Class_Modules
             var B = Bools.OfType<bool>().ToList();
             //S.IsUsed, S.IsActive, S.IsUploaded, S.IsWeighted, S.IsPacked, S.InRepair
             //Used 1, Active 1,Uploaded 1, Packed 0, Repair 0 = Проверка прошла
-            if (B[0] & B[1] & B[2] & !B[4] & !B[5])            
+
+            if (B[0] & B[1] & B[2] & !B[4] & !B[5])
                 return "UpOk";
+
+            //if (B[0] & B[1] & B[2]  & !B[5])
+            //    return "UpOk";
 
             if (B[0] & B[1] & !B[2] & !B[4] & !B[5])
                 return "UpNok";
@@ -997,12 +1011,12 @@ namespace GS_STB.Class_Modules
         string SendToCOM(string GeneratedRequest,int T) //0DF20101000CAEB049
         {
             var ArrayByte = StringToByteArray(GeneratedRequest); //count 8 12-242-1-1-0-12-171-219
+            intSize = 0;
             try
             {
                 SerialPort.Open();
                 SerialPort.Write(ArrayByte.ToArray(),0, ArrayByte.ToArray().Length);
                 Thread.Sleep(T);
-
                 
                 while (SerialPort.BytesToRead > 0)
                  intSize = SerialPort.Read(arrBuffer, 0, 1024); 

@@ -36,7 +36,7 @@ namespace GS_STB.Class_Modules
         {
             Label Label_ShiftCounter = control.Controls.Find("Label_ShiftCounter", true).OfType<Label>().FirstOrDefault();
             Label LB_LOTCounter = control.Controls.Find("LB_LOTCounter", true).OfType<Label>().FirstOrDefault();
-            //var LengthCheck = control.Controls.Find("LengthCheck", true).FirstOrDefault().Visible = true ;
+            var LengthCheck = control.Controls.Find("LengthCheck", true).FirstOrDefault().Visible = true;
             var FUG = control.Controls.Find("FAS_Print", true).FirstOrDefault();
             var SNPrint = control.Controls.Find("SNPRINT", true).FirstOrDefault();
             var CHPrintSN = control.Controls.Find("CHPrintSN", true).OfType<CheckBox>().FirstOrDefault();
@@ -94,7 +94,7 @@ namespace GS_STB.Class_Modules
        
         public override void KeyDownMethod()
         {
-            var LengthCheck = control.Controls.Find("LengthCheck", true).OfType<CheckBox>().FirstOrDefault();
+            var LengthCheck = control.Controls.Find("LengthCheck", true).OfType<CheckBox>().FirstOrDefault();            
             TextBox TB = control.Controls.Find("SerialTextBox", true).OfType<TextBox>().FirstOrDefault();
             Label Controllabel = control.Controls.Find("Controllabel", true).OfType<Label>().FirstOrDefault();
             var PrintCheckSN = control.Controls.Find("PrintCheckSN", true).OfType<CheckBox>().FirstOrDefault(); //Перепечатка серийного номера по серийному номеру

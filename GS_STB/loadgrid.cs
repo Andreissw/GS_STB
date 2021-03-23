@@ -13,11 +13,10 @@ namespace GS_STB
     {
         static public void Loadgrid(DataGridView grid, string cmd) //Достает с базы PSIGMA FLAT и преобразует в грид, таблицу
         {
-
             try
             {
-                SqlConnection sqlcon = new SqlConnection(@"Data Source=WSG150170\SQLEXPRESS; Initial Catalog= FAS; integrated security=True;");
-                //SqlConnection sqlcon = new SqlConnection(@"Data Source=traceability\flat; Initial Catalog= FAS; user id=volodin;password=volodin;");
+                //SqlConnection sqlcon = new SqlConnection(@"Data Source=WSG150170\SQLEXPRESS; Initial Catalog= FAS; integrated security=True;");
+                SqlConnection sqlcon = new SqlConnection(@"Data Source=traceability\flat; Initial Catalog= FAS; user id=volodin;password=volodin;");
                 SqlCommand c = new SqlCommand();
                 SqlDataAdapter da = new SqlDataAdapter();
                 DataSet ds = new DataSet();

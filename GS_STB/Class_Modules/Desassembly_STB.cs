@@ -58,6 +58,7 @@ namespace GS_STB.Class_Modules
                     BT.Enabled = false;CBer.Enabled = false;  LabelStatus(Controllabel, $"{TB.Text} \n Не найден номер на FAS_Start", Color.Red); TB.Clear();
                     TB.Select(); return;
                 }
+
                 PCBID = int.Parse(ArraysSN[7].ToString());
                 if (ArrayCheck(ArraysSN, Controllabel, TB.Text)) //Если возвращает True, то проверку не проходит
                 {     BT.Enabled = false;   CBer.Enabled = false; TB.Text = ""; TB.Select();  return;   }

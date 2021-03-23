@@ -344,6 +344,28 @@ namespace GS_STB.Class_Modules
                     ApplicationID = (short)IDApp,
                     StateCodeDate = DateTime.UtcNow.AddHours(2),
                     StateCodeByID = (short)UserID,
+                    SerialNumber = int.Parse(FullSTBSN.Substring(15)),
+                    FullSTBSN = FullSTBSN
+                };
+
+                FAS.FAS_OperationLog.Add(FasOp);
+                FAS.SaveChanges();
+            }
+        }
+
+        public void AddToOperLogFASEND(string FullSTBSN, int pcbid)
+        {
+            using (FASEntities FAS = new FASEntities())
+            {
+                var FasOp = new FAS_OperationLog()
+                {
+                    PCBID = pcbid,
+                    ProductionAreaID = (byte)LineID,
+                    StationID = (short)StationID,
+                    ApplicationID = (short)IDApp,
+                    StateCodeDate = DateTime.UtcNow.AddHours(2),
+                    StateCodeByID = (short)UserID,
+                    SerialNumber = int.Parse(FullSTBSN.Substring(15)),
                     FullSTBSN = FullSTBSN
                 };
 
